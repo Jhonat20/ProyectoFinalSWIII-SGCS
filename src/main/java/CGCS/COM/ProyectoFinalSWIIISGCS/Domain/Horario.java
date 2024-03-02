@@ -16,8 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class Horario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idhorario;
-    // DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+    private Long idHorario;
     private LocalDate dia;
     private LocalTime horaInicio;
     private LocalTime horaFin;
