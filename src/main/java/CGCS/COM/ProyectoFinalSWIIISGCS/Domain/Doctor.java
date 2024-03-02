@@ -1,5 +1,8 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Set;
@@ -12,28 +15,29 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDoctor;
 
+    @NotBlank(message = "Los nombres son obligatorio")
+    @Size(max = 255, message = "Los nombres debe tener como máximo 255 caracteres")
     @Column(length = 255, nullable = false)
-    private String nombre;
+    private String nombres;
 
+    @NotBlank(message = "Los apellidos son obligatorios")
+    @Size(max = 255, message = "Los apellidos deben tener como máximo 255 caracteres")
     @Column(length = 255, nullable = false)
-    private String apellido;
+    private String apellidos;
 
-    //  @ManyToOne
-    @JoinColumn(name = "idEspecialidad")
-    private Especialidad especialidad;
-
+    @NotBlank(message = "El DNI es obligatorio")
+    @Size(max = 20, message = "El DNI debe tener como máximo 20 caracteres")
     @Column(length = 20, nullable = false, unique = true)
     private String dni;
 
+    @Size(max = 20, message = "El teléfono debe tener como máximo 20 caracteres")
     @Column(length = 20)
     private String telefono;
 
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email debe tener un formato válido")
+    @Size(max = 255, message = "El email debe tener como máximo 255 caracteres")
     @Column(length = 255, nullable = false, unique = true)
     private String email;
 
-    //  @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private Horario horario;
-
-    //@OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private Set<Cita> citas;
 }
