@@ -37,6 +37,7 @@ public class DoctorController {
         } else {
             Doctor nuevoDoctor = doctorService.registrarDoctor(doctor);
             return ResponseEntity.ok(GlobalResponse.ok(nuevoDoctor));
+
         }
     }
     @GetMapping("/{id}")
