@@ -1,5 +1,4 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Repositories;
 
-public interface DoctorRepository {
-
+public interface CitaRepository {
 }
