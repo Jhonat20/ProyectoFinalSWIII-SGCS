@@ -1,4 +1,5 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,4 +25,8 @@ public class Horario {
     private String diaTrabjo;
 
     private boolean disponible;
+=======
+
+public class Horario {
+>>>>>>> origin/main
 }
