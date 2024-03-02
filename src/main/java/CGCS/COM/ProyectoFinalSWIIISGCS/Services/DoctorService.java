@@ -4,6 +4,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DoctorService {
 
@@ -11,5 +12,5 @@ public interface DoctorService {
 
     Doctor registrarDoctor(Doctor doctor) throws IllegalOperationException;
 
-
+    Optional<Doctor> obtenerDoctorPorId(Long id) throws IllegalOperationException;
 }

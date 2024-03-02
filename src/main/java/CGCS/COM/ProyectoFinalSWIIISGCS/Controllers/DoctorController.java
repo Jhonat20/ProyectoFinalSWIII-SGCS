@@ -5,6 +5,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
+import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+
 @RestController
 @RequestMapping("api/v1/doctores")
 public class DoctorController {
@@ -22,8 +24,9 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    public List<Doctor> listarDoctores() throws IllegalOperationException {
-        return doctorService.listarDoctores();
+    public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
+        List<Doctor> doctores = doctorService.listarDoctores();
+        return ResponseEntity.ok(GlobalResponse.ok(doctores));
     }
 
     @PostMapping
@@ -33,13 +36,17 @@ public class DoctorController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Doctor nuevoDoctor = doctorService.registrarDoctor(doctor);
-            String mensaje = "Doctor agregado exitosamente";
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("mensaje", mensaje);
-            response.put("doctor", nuevoDoctor);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.ok(GlobalResponse.ok(nuevoDoctor));
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerDoctor(@PathVariable Long id) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorService.obtenerDoctorPorId(id);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+            return ResponseEntity.ok(GlobalResponse.ok(doctor));
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
         }
     }
 
