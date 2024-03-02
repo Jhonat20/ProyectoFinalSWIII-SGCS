@@ -8,7 +8,9 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.exception;
 public final class ErrorMessage {
 	public static final String HISTORIAL_MEDICO_NOT_FOUND = "El Historial Medico con id proporcionado no fue encontrado";
 	public static final String HISTORIAL_MEDICO_INVALID = "El Historial no tiene un formato valido";
-	
+
+	public static final String HORARIO_NOT_FOUND = "El Horario con id proporcionado no fue encontrado";
+	public static final String HORARIO_INVALID = "El horario es inválido";
 	private ErrorMessage() {
 		throw new IllegalStateException ("Utility class");
 	}
