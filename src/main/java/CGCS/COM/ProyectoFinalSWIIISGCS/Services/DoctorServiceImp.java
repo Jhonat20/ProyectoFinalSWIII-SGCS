@@ -30,5 +30,28 @@ public class DoctorServiceImp implements DoctorService {
     public Optional<Doctor> obtenerDoctorPorId(Long id) throws IllegalOperationException {
         return doctorRepository.findById(id);
     }
+    //Edward Moya
+    @Override
+    public void eliminarDoctor(Long id) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(id);
+        if (optionalDoctor.isPresent()) {
+            doctorRepository.delete(optionalDoctor.get());
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
+        }
+    }
 
+    @Override
+    public Doctor actualizarDoctor(Long id, Doctor doctor) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(id);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctorExistente = optionalDoctor.get();
+            doctorExistente.setNombres(doctor.getNombres());
+            doctorExistente.setApellidos(doctor.getApellidos());
+            // Actualiza otros campos según sea necesario
+            return doctorRepository.save(doctorExistente);
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
+        }
+    }
 }

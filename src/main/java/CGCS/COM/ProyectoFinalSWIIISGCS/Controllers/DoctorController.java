@@ -54,4 +54,22 @@ public class DoctorController {
         }
     }
 
+    //Edward Moya
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarDoctor(@PathVariable Long id) throws IllegalOperationException {
+        doctorService.eliminarDoctor(id);
+        return ResponseEntity.ok(GlobalResponse.ok("Doctor eliminado correctamente"));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarDoctor(@PathVariable Long id, @Valid @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+        } else {
+            Doctor doctorActualizado = doctorService.actualizarDoctor(id, doctor);
+            return ResponseEntity.ok(GlobalResponse.ok(doctorActualizado));
+        }
+    }
+
 }

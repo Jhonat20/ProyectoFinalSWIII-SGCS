@@ -1,4 +1,7 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Repositories;
 
-public interface PacienteRepository {
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 }
