@@ -1,7 +1,10 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.Date;
+import java.util.Set;
 
 @Data
 @Entity
@@ -31,12 +34,11 @@ public class Paciente {
 
     @ManyToOne
     @JoinColumn(name = "idSexo")
-    private Sexo sexo;
+    private boolean genero;
 
     @OneToOne(mappedBy = "paciente")
-    private HistoriaClinica historiaClinica;
+    private HistorialMedico historiaClinica;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
     private Set<Cita> citas;
-
 }
