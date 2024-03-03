@@ -32,13 +32,5 @@ public class Paciente {
     @Column(nullable = false)
     private Date fechaNacimiento;
 
-    @ManyToOne
-    @JoinColumn(name = "idSexo")
-    private boolean genero;
 
-    @OneToOne(mappedBy = "paciente")
-    private HistorialMedico historiaClinica;
-
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
-    private Set<Cita> citas;
 }
