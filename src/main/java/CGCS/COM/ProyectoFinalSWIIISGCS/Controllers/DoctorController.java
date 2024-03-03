@@ -8,6 +8,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,8 +25,10 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
+    public ResponseEntity<?> listarDoctores(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
         List<Doctor> doctores = doctorService.listarDoctores();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("API-Version", apiVersion);
         return ResponseEntity.ok(GlobalResponse.ok(doctores));
     }
 

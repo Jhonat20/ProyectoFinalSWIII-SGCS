@@ -5,12 +5,13 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface HorarioService {
-    List<Horario> listarTodos();
-    Horario BuscarPorId(Long id);
-    Horario Grabar(Horario horario) throws IllegalOperationException;
-    Horario Actualizar(Long id, Horario horario)throws EntityNotFoundException;
+    List<Horario> listarHorario();
+    Optional <Horario> buscarPorId(Long id);
+    Horario guardadHorario(Horario horario) throws IllegalOperationException;
+    Horario actualizarHorario(Long id, Horario horario)throws EntityNotFoundException;
     void Eliminar(Long id);
 
 }

@@ -5,13 +5,16 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.HistorialMedico;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.HistorialMedicoService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.ErrorResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
+import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/HistorialMedico")
@@ -22,28 +25,23 @@ private HistorialMedicoService historialMedicoService;
 
 @GetMapping
 
-    public ResponseEntity<?> obtenerTodos() {
-        try {
-            List<HistorialMedico> historialMedico = historialMedicoService.listarTodos();
-            if(historialMedico==null || historialMedico.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            else return ResponseEntity.ok(historialMedico);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Error interno del servidor"));
+    public ResponseEntity<?> listarHistorialMedico() {
+        List<HistorialMedico> historialMedicos = historialMedicoService.listarHistorialMedico();
+        if (historialMedicos.isEmpty()) {
+            return ResponseEntity.ok(GlobalResponse.error("No hay información disponible para mostrar"));
+        } else {
+            return ResponseEntity.ok(GlobalResponse.ok(historialMedicos));
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        try {
-            HistorialMedico historialMedico = historialMedicoService.BuscarPorId(id);
-            return ResponseEntity.ok(historialMedico);
-
-        }catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Error interno del servidor"));
+        Optional <HistorialMedico> historialMedico = historialMedicoService.BuscarPorId(id);
+        if (historialMedico.isPresent()) {
+            HistorialMedico historialMedicoEncontrado = historialMedico.get();
+            return ResponseEntity.ok(historialMedicoEncontrado);
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
 

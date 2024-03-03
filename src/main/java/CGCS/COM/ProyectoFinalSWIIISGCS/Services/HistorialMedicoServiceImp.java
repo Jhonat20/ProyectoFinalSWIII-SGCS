@@ -21,19 +21,14 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
 
     @Override
     @Transactional
-    public List<HistorialMedico> listarTodos() {
+    public List<HistorialMedico> listarHistorialMedico() {
         return histMedRep.findAll();
     }
 
     @Override
-    @Transactional
-    public HistorialMedico BuscarPorId(Long id) throws EntityNotFoundException {
-        Optional<HistorialMedico> historialMedico = histMedRep.findById(id);
-        if (historialMedico.isEmpty()) {
-            throw new EntityNotFoundException(ErrorMessage.HISTORIAL_MEDICO_NOT_FOUND);
-        }
-
-        return historialMedico.get();
+    @Transactional (readOnly = true)
+    public Optional<HistorialMedico> BuscarPorId(Long id) throws EntityNotFoundException {
+        return histMedRep.findById(id);
     }
 
 

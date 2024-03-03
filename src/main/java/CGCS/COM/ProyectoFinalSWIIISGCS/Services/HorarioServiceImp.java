@@ -22,35 +22,23 @@ public class HorarioServiceImp implements HorarioService{
 
     @Override
     @Transactional
-    public List<Horario> listarTodos() {
+    public List<Horario> listarHorario() {
         return horarioRepository.findAll();
     }
 
     @Override
-    @Transactional
-    public Horario BuscarPorId(Long id)throws EntityNotFoundException {
-        Optional<Horario> horario = horarioRepository.findById(id);
-        if (horario.isEmpty()) {
-            throw new EntityNotFoundException(ErrorMessage.HORARIO_NOT_FOUND);
-        }
-        return horario.get();
+    @Transactional(readOnly = true)
+    public Optional<Horario> buscarPorId(Long id) {
+        return horarioRepository.findById(id) ;
     }
 
     @Override
-    public Horario Grabar(Horario horario) throws IllegalOperationException {
-        // Verificar si alguno de los campos es nulo o no tiene el tipo de dato esperado
-        if (horario.getDia() == null || horario.getHoraInicio() == null  || horario.getHoraFin() == null) {
-            throw new IllegalOperationException(ErrorMessage.HORARIO_INVALID);
-        }
-
-        return horarioRepository.save(horario);
+    public Horario guardadHorario(Horario horario) throws IllegalOperationException {
+       return horarioRepository.save(horario);
     }
 
-
-
-
     @Override
-    public Horario Actualizar(Long id, Horario horario) throws EntityNotFoundException {
+    public Horario actualizarHorario(Long id, Horario horario) throws EntityNotFoundException {
       Optional<Horario> horarioExistente = horarioRepository.findById(id);
         if (horarioExistente.isEmpty()) {
             throw new EntityNotFoundException(ErrorMessage.HORARIO_NOT_FOUND);
