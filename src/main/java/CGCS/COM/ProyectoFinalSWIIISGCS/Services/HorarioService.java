@@ -13,5 +13,4 @@ public interface HorarioService {
     Horario guardadHorario(Horario horario) throws IllegalOperationException;
     Horario actualizarHorario(Long id, Horario horario)throws EntityNotFoundException;
     void Eliminar(Long id);
-
 }
