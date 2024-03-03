@@ -1,5 +1,5 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
-public class PacienteService {
+public interface PacienteService {
 
 }

@@ -1,4 +1,4 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
-public interface CitaServiceImp {
+public class CitaServiceImp {
 }
