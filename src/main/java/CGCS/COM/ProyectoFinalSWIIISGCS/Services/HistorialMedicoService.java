@@ -11,9 +11,9 @@ import java.util.Optional;
 public interface HistorialMedicoService {
 
     List<HistorialMedico> listarHistorialMedico();
-    Optional<HistorialMedico> BuscarPorId(Long id);
-    HistorialMedico Grabar(HistorialMedico historialMedico) ;
-    HistorialMedico Actualizar(Long id, HistorialMedico historialMedico) ;
+    Optional<HistorialMedico> BuscarPorId(Long id) throws IllegalOperationException;
+    HistorialMedico Grabar(HistorialMedico historialMedico)  throws IllegalOperationException;
+    HistorialMedico Actualizar(Long id, HistorialMedico historialMedico) throws IllegalOperationException, EntityNotFoundException;
     HistorialMedico actualizarParcial(Long id, Map<String, Object> cambios);
     void Eliminar(Long id) throws EntityNotFoundException, IllegalOperationException;
 

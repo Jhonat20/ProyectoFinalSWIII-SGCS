@@ -3,6 +3,7 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.HistorialMedico;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HistorialMedicoRepository;
 
+import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,19 +38,25 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
 
     @Override
     public HistorialMedico Grabar(HistorialMedico historialMedico) {
-        if (historialMedico.getDiagnostico().isEmpty() ||
-                historialMedico.getAlergias().isEmpty() ||
-                historialMedico.getCirugias().isEmpty() ||
-                historialMedico.getEnfermedadesPrevias().isEmpty() ||
-                historialMedico.getMedicamentos().isEmpty()) {
-            // Manejar el caso en el que algún campo requerido esté vacío
+        if (historialMedico.getAlergias() == null) {
+            historialMedico.setAlergias("Ninguno");
         }
+        if (historialMedico.getCirugias() == null) {
+            historialMedico.setCirugias("Ninguna");
+        }
+        if (historialMedico.getEnfermedadesPrevias() == null) {
+            historialMedico.setEnfermedadesPrevias("Ninguna");
+        }
+        if (historialMedico.getMedicamentos() == null) {
+            historialMedico.setMedicamentos("Ninguno");
+        }
+
         return histMedRep.save(historialMedico);
     }
 
     @Override
     @Transactional
-    public HistorialMedico Actualizar(Long id, HistorialMedico historialMedico) {
+    public HistorialMedico Actualizar(Long id, HistorialMedico historialMedico)  {
         Optional<HistorialMedico> historialMedicoOptional = obtenerHistorialMedicoExistente(id);
         if (historialMedicoOptional.isPresent()) {
             HistorialMedico historialMedicoExistente = historialMedicoOptional.get();

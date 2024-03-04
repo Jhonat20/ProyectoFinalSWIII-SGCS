@@ -25,10 +25,8 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    public ResponseEntity<?> listarDoctores(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+    public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
         List<Doctor> doctores = doctorService.listarDoctores();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("API-Version", apiVersion);
         return ResponseEntity.ok(GlobalResponse.ok(doctores));
     }
 

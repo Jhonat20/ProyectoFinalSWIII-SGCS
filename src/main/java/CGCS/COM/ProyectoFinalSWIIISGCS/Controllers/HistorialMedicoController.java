@@ -29,26 +29,22 @@ public class HistorialMedicoController {
 
     @GetMapping
     public ResponseEntity<?> listarHistorialMedico() {
-        List<HistorialMedico> historialMedicos = historialMedicoService.listarHistorialMedico();
-        if (historialMedicos.isEmpty()) {
-            return ResponseEntity.ok(new CustomVerificacionResponse("No hay información disponible para mostrar"));
-        } else if(historialMedicos.size() > 0) {
-            return ResponseEntity.ok(new SuccessResponse("Historiales médicos encontrados exitosamente", historialMedicos));
-        }else {
-            return ResponseEntity.ok(GlobalResponse.ok(historialMedicos));
-        }
+       List<HistorialMedico> historialMedicos = historialMedicoService.listarHistorialMedico();
+            if (historialMedicos.isEmpty()) {
+                return ResponseEntity.ok(GlobalResponse.error("No hay información disponible para mostrar"));
+            } else {
+                return ResponseEntity.ok(GlobalResponse.ok(historialMedicos));
+            }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerHistorialMedico(@PathVariable Long id) throws IllegalOperationException {
         Optional<HistorialMedico> optionalHistorialMedico = historialMedicoService.BuscarPorId(id);
-        if (optionalHistorialMedico.isPresent()) {
+        if(optionalHistorialMedico.isPresent()) {
             HistorialMedico historialMedico = optionalHistorialMedico.get();
-            return ResponseEntity.ok(new SuccessResponse("Historial médico encontrado exitosamente", historialMedico));
-        } else if(optionalHistorialMedico.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomVerificacionResponse("No se encontró el historial médico con el ID N°  ["+id+"] proporcionado"));
-        }else {
-            return ResponseEntity.ok(GlobalResponse.ok(optionalHistorialMedico));
+            return ResponseEntity.ok(GlobalResponse.ok(historialMedico));
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
 
@@ -57,41 +53,38 @@ public class HistorialMedicoController {
         if (bindingResult.hasErrors()) {
             Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
-        } else if(historialMedico.getIdHistorialMedico() == null || historialMedico.getIdHistorialMedico() == 0){
-            HistorialMedico historialMedicoGuardado = historialMedicoService.Grabar(historialMedico);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse("Historial médico guardado exitosamente", historialMedicoGuardado));
-        }
-        else {
-            return ResponseEntity.ok(GlobalResponse.ok(historialMedico));
+        }else {
+            HistorialMedico nuevoHistorialMedico = historialMedicoService.Grabar(historialMedico);
+            return ResponseEntity.ok(GlobalResponse.ok(nuevoHistorialMedico));
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarHistorialMedico(@PathVariable Long id, @Valid @RequestBody HistorialMedico historialMedico, BindingResult bindingResult) throws IllegalOperationException {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
-            return ResponseEntity.ok(GlobalResponse.ok(errores));
-        } else if(historialMedico.getIdHistorialMedico() == null || historialMedico.getIdHistorialMedico() == 0){
-            HistorialMedico historialMedicoActualizado = historialMedicoService.Actualizar(id, historialMedico);
-            return ResponseEntity.ok(new SuccessResponse("Historial médico actualizado exitosamente", historialMedicoActualizado));
-        }else {
-            return ResponseEntity.ok(GlobalResponse.ok(historialMedico));//Verificar
-        }
-    }
-
-
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> actualizarParcialHistorialMedico(@PathVariable Long id, @RequestBody Map<String, Object> cambios) {
         Optional<HistorialMedico> historialMedicoOptional = historialMedicoService.BuscarPorId(id);
         if (historialMedicoOptional.isPresent()) {
+            if (bindingResult.hasErrors()) {
+                Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+            } else {
+                HistorialMedico historialMedicoActualizado = historialMedicoService.Actualizar(id, historialMedico);
+                return ResponseEntity.ok(GlobalResponse.ok(historialMedicoActualizado));
+            }
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
+        }
+
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> actualizarParcialHistorialMedico(@PathVariable Long id, @RequestBody Map<String, Object> cambios) throws IllegalOperationException{
+        Optional<HistorialMedico> historialMedicoOptional = historialMedicoService.BuscarPorId(id);
+        if(historialMedicoOptional.isPresent()){
             HistorialMedico historialMedico = historialMedicoOptional.get();
-            HistorialMedico historialMedicoActualizado = historialMedicoService.actualizarParcial(id, cambios);
-            return ResponseEntity.ok(new SuccessResponse("Historial médico actualizado exitosamente", historialMedicoActualizado));
-        } else if(historialMedicoOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomVerificacionResponse("No se encontró el historial médico con el ID proporcionado"));
-        }else {
-            return ResponseEntity.ok(GlobalResponse.ok(historialMedicoOptional));
+            historialMedicoService.actualizarParcial(id, cambios);
+            return ResponseEntity.ok(GlobalResponse.ok(historialMedico));
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
 
@@ -100,13 +93,11 @@ public class HistorialMedicoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarHistorialMedico(@PathVariable Long id) throws IllegalOperationException {
         Optional<HistorialMedico> historialMedicoOptional = historialMedicoService.BuscarPorId(id);
-        if (historialMedicoOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CustomVerificacionResponse("No se encontró el historial médico a eliminar"));
-        }else if (historialMedicoOptional.isPresent()){
+        if (historialMedicoOptional.isPresent()) {
             historialMedicoService.Eliminar(id);
-            return ResponseEntity.ok(new CustomVerificacionResponse("Historial médico eliminado exitosamente"));
-        }else {
-            return ResponseEntity.ok(GlobalResponse.ok(historialMedicoOptional));
+            return ResponseEntity.ok(GlobalResponse.ok("Historial médico eliminado correctamente"));
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
 
