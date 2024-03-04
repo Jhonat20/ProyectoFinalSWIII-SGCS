@@ -68,7 +68,7 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
     @Override
     @Transactional
     public HistorialMedico Actualizar(Long id, HistorialMedico historialMedico) {
-        Optional<HistorialMedico> historialMedicoOptional = obtenerHistorialMedicoExistente(id);
+        Optional<HistorialMedico> historialMedicoOptional = histMedRep.findById(id);
         if (historialMedicoOptional.isPresent()) {
             HistorialMedico historialMedicoExistente = historialMedicoOptional.get();
             actualizarCamposHistorialMedico(historialMedicoExistente, historialMedico);
@@ -116,9 +116,6 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
 
     // Métodos privados
 
-    private Optional<HistorialMedico> obtenerHistorialMedicoExistente(Long id) {
-        return histMedRep.findById(id);
-    }
 
     private void asignarValoresPredeterminados(HistorialMedico historialMedico) {
         if (historialMedico.getAlergias() == null) {
