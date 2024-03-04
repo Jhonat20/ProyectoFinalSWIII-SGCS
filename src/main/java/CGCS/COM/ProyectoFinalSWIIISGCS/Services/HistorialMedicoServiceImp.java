@@ -117,6 +117,12 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
     // Métodos privados
 
 
+
+    /**
+     * Asigna valores predeterminados a los campos del historial médico si son nulos.
+     *
+     * @param historialMedico El historial médico al que se le asignarán los valores predeterminados.
+     */
     private void asignarValoresPredeterminados(HistorialMedico historialMedico) {
         if (historialMedico.getAlergias() == null) {
             historialMedico.setAlergias("Ninguno");
@@ -132,6 +138,12 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
         }
     }
 
+    /**
+     * Actualiza los campos del historial médico con los valores proporcionados.
+     *
+     * @param historialMedicoExistente El historial médico existente que se actualizará.
+     * @param historialMedico          El nuevo historial médico con los valores actualizados.
+     */
     private void actualizarCamposHistorialMedico(HistorialMedico historialMedicoExistente, HistorialMedico historialMedico) {
         historialMedicoExistente.setDiagnostico(historialMedico.getDiagnostico());
         historialMedicoExistente.setAlergias(historialMedico.getAlergias());
@@ -140,6 +152,14 @@ public class HistorialMedicoServiceImp implements HistorialMedicoService {
         historialMedicoExistente.setMedicamentos(historialMedico.getMedicamentos());
     }
 
+
+
+    /**
+     * Aplica cambios parciales a un historial médico con los valores proporcionados.
+     *
+     * @param historialMedico El historial médico al que se le aplicarán los cambios parciales.
+     * @param cambios          Mapa con los cambios parciales a aplicar en el historial médico.
+     */
     private void aplicarCambiosParciales(HistorialMedico historialMedico, Map<String, Object> cambios) {
         cambios.forEach((key, value) -> {
             switch (key) {
