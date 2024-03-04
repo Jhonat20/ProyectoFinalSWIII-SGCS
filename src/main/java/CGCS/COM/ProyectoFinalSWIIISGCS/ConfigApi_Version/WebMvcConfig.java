@@ -1,4 +1,4 @@
-package CGCS.COM.ProyectoFinalSWIIISGCS.Util;
+package CGCS.COM.ProyectoFinalSWIIISGCS.ConfigApi_Version;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

@@ -1,4 +1,4 @@
-package CGCS.COM.ProyectoFinalSWIIISGCS.Util;
+package CGCS.COM.ProyectoFinalSWIIISGCS.ConfigApi_Version;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
