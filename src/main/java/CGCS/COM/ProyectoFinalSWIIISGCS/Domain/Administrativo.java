@@ -45,8 +45,4 @@ public class Administrativo {
     @Column(length = 255)
     private String cargo;
 
-    @Column(length = 255)
-    private String departamento;
-
-
 }
