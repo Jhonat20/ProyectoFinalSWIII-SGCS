@@ -11,4 +11,10 @@ public interface DoctorService {
     Doctor registrarDoctor(Doctor doctor) throws IllegalOperationException;
 
     Optional<Doctor> obtenerDoctorPorId(Long id) throws IllegalOperationException;
+
+    //Edward Moya
+    void eliminarDoctor(Long id) throws IllegalOperationException;
+
+    Doctor actualizarDoctor(Long id, Doctor doctor) throws IllegalOperationException;
+
 }
