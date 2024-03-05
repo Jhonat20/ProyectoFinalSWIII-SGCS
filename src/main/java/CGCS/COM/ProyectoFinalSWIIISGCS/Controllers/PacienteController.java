@@ -114,4 +114,17 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al agregar la cita al paciente.");
         }
     }
+
+    @PostMapping("/{idPaciente}/historiales-medicos/{idHistorialMedico}")
+    public ResponseEntity<?> asignarHistorialMedicoAPaciente(@PathVariable Long idPaciente, @PathVariable Long idHistorialMedico) {
+        try {
+            pacienteService.agregarHistorialMedicoAPaciente(idPaciente, idHistorialMedico);
+            return ResponseEntity.ok().body(Map.of("status", "ok", "message", "Historial médico asignado exitosamente al paciente."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.ok().body(Map.of("status", "error", "message", "Ha ocurrido un error al asignar el historial médico al paciente"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al asignar el historial médico al paciente.");
+        }
+    }
+
 }

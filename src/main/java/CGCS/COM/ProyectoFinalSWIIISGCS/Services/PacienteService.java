@@ -20,4 +20,6 @@ public interface PacienteService {
 
     void agregarCitaAPaciente(long idPaciente, long idCita);
 
+    void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico) ;
+
 }

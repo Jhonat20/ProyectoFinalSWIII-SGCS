@@ -1,5 +1,6 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,5 +32,6 @@ public class HistorialMedico {
 
     @OneToOne
     //@JoinColumn(name = "id_paciente", referencedColumnName = "idPaciente")
+    @JsonIgnore
     private Paciente paciente;
 }

@@ -1,8 +1,10 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.HistorialMedico;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HistorialMedicoRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.PacienteRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class PacienteServiceImp implements PacienteService {
 
     @Autowired
     private CitaRepository citaRepository;//Repositorio para el acceso a datos de citas
+
+    @Autowired
+    private HistorialMedicoRepository historialMedicoRepository;//Repositorio para el acceso a datoS DE HISTORIAL MEDICO
     /**
      * Lista todos los pacientes registrados en el sistema.
      *
@@ -114,6 +119,25 @@ public class PacienteServiceImp implements PacienteService {
             citaRepository.save(cita);
         } else {
             throw new NoSuchElementException("La cita o paciente  no existen");
+        }
+    }
+
+    public void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico){
+        Optional<Paciente> pacienteOptional = pacienteRepository.findById(idPaciente);
+        Optional<HistorialMedico> historialMedicoOptional = historialMedicoRepository.findById(idHistorialMedico);
+
+        if (pacienteOptional.isPresent() && historialMedicoOptional.isPresent()) {
+            Paciente paciente = pacienteOptional.get();
+            HistorialMedico historialMedico = historialMedicoOptional.get();
+
+            // Establecer la relación entre el paciente y el historial médico
+            paciente.setHistorialMedico(historialMedico);
+            historialMedico.setPaciente(paciente);
+
+            // Guardar los cambios en la base de datos
+            pacienteRepository.save(paciente);
+        } else {
+            throw new NoSuchElementException("El paciente o historial médico no existen");
         }
     }
 }
