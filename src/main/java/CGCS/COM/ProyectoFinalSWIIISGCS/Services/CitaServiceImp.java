@@ -83,8 +83,6 @@ public class CitaServiceImp implements CitaService {
         Optional<Cita> optionalCita = citaRepository.findById(id);
         if (optionalCita.isPresent()) {
             Cita citaExistente = optionalCita.get();
-            citaExistente.setNombrePaciente(cita.getNombrePaciente());
-            citaExistente.setNombreDoctor(cita.getNombreDoctor());
             citaExistente.setDescripcion(cita.getDescripcion());
             citaExistente.setFechaHora(cita.getFechaHora());
             citaExistente.setEstado(cita.getEstado());

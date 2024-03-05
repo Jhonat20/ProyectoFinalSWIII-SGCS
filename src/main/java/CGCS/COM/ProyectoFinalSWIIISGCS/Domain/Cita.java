@@ -18,14 +18,6 @@ public class Cita {
     @Column(name = "id_cita")
     private Long idCita;
 
-    @NotBlank(message = "El nombre del paciente es obligatorio")
-    @Column(name = "nombre_paciente", nullable = false)
-    private String nombrePaciente;
-
-    @NotBlank(message = "El nombre del doctor es obligatorio")
-    @Column(name = "nombre_doctor", nullable = false)
-    private String nombreDoctor;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_hora", nullable = false)
     @FutureOrPresent(message = "La fecha de la cita debe ser en el presente o en el futuro")
@@ -41,11 +33,11 @@ public class Cita {
 
 
     @ManyToOne
-    @JoinColumn(name = "id_doctor", nullable = false)
+    @JoinColumn(name = "id_doctor")
     private Doctor doctor;
 
 
     @ManyToOne
-    @JoinColumn(name = "id_paciente", nullable = false)
+    @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 }
