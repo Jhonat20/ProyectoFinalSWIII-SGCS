@@ -6,10 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,11 +24,9 @@ public class Horario {
     private LocalDate dia;
 
     @NotNull(message = "El campo hora de inicio no puede ser nulo")
-    @NotBlank(message = "El campo hora de inicio no puede estar en blanco")
     private LocalTime horaInicio;
 
     @NotNull(message = "El campo hora final no puede ser nulo")
-    @NotBlank(message = "El campo hora final no puede estar en blanco")
     private LocalTime horaFin;
 
     // Validación personalizada
