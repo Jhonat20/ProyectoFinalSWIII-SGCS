@@ -1,12 +1,15 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.PacienteRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -19,6 +22,8 @@ public class PacienteServiceImp implements PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository; // Repositorio para el acceso a datos de pacientes.
 
+    @Autowired
+    private CitaRepository citaRepository;//Repositorio para el acceso a datos de citas
     /**
      * Lista todos los pacientes registrados en el sistema.
      *
@@ -95,6 +100,20 @@ public class PacienteServiceImp implements PacienteService {
             return pacienteRepository.save(pacienteExistente);
         } else {
             throw new IllegalOperationException("No se encontró el paciente con el ID proporcionado: " + id);
+        }
+    }
+
+    @Override
+    public void agregarCitaAPaciente(long idPaciente, long idCita) {
+        Optional<Paciente> pacienteOptional = pacienteRepository.findById(idPaciente);
+        Optional<Cita> citaOptional = citaRepository.findById(idCita);
+        if (pacienteOptional.isPresent() && citaOptional.isPresent()) {
+            Paciente paciente = pacienteOptional.get();
+           Cita cita = citaOptional.get();
+            cita.setPaciente(paciente);
+            citaRepository.save(cita);
+        } else {
+            throw new NoSuchElementException("La cita o paciente  no existen");
         }
     }
 }

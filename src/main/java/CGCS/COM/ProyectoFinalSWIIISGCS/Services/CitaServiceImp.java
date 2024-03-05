@@ -85,7 +85,7 @@ public class CitaServiceImp implements CitaService {
             Cita citaExistente = optionalCita.get();
             citaExistente.setDescripcion(cita.getDescripcion());
             citaExistente.setFechaHora(cita.getFechaHora());
-            citaExistente.setEstado(cita.getEstado());
+            //citaExistente.setEstado(cita.getEstado());
             // Actualiza otros campos según sea necesario.
             return citaRepository.save(citaExistente);
         } else {
