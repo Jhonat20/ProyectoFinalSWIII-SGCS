@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -55,4 +56,10 @@ public class Paciente {
     @Size(max = 5, message = "El grupo sanguíneo debe tener como máximo 5 caracteres")
     @Column(name = "grupo_sanguineo", length = 5, nullable = false)
     private String grupoSanguineo;
+
+    @OneToMany(mappedBy = "paciente")
+    private List<Cita> citas;
+
+    @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private HistorialMedico historialMedico;
 }

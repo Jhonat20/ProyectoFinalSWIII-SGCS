@@ -26,4 +26,9 @@ public class Especialidad {
     @Column(length = 500, nullable = false)
     private String descripcion;
 
+
+
+    @ManyToMany(mappedBy = "especialidades")
+    private Set<Doctor> doctores;
+
 }

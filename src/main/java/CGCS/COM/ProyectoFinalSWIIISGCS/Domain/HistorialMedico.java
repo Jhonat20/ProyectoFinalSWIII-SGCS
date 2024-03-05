@@ -28,4 +28,8 @@ public class HistorialMedico {
     @Size(max = 500, message = "Los medicamentos deben tener como máximo 500 caracteres")
     private String medicamentos;
 
+
+    @OneToOne
+    //@JoinColumn(name = "id_paciente", referencedColumnName = "idPaciente")
+    private Paciente paciente;
 }

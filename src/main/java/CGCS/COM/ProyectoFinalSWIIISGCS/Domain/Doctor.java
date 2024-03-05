@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -39,5 +40,20 @@ public class Doctor {
     @Size(max = 255, message = "El email debe tener como máximo 255 caracteres")
     @Column(length = 255, nullable = false, unique = true)
     private String email;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<Cita> citas;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "id_horario", referencedColumnName = "idHorario")
+    private Horario horario;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "Doctor_Especialidad",
+            joinColumns = { @JoinColumn(name = "id_doctor") },
+            inverseJoinColumns = { @JoinColumn(name = "id_especialidad") }
+    )
+    private Set<Especialidad> especialidades;
 
 }

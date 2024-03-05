@@ -1,5 +1,6 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -38,4 +39,13 @@ public class Cita {
     @Column(name = "estado", nullable = false)
     private String estado;
 
+
+    @ManyToOne
+    @JoinColumn(name = "id_doctor", nullable = false)
+    private Doctor doctor;
+
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente", nullable = false)
+    private Paciente paciente;
 }
