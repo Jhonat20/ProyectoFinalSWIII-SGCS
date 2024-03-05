@@ -23,7 +23,7 @@ public class GlobalResponse {
 
     public static GlobalResponse ok(Object data) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return new GlobalResponse("ok", data, request);
+        return new GlobalResponse("OK", data, request);
     }
 
     public static GlobalResponse error(String message) {

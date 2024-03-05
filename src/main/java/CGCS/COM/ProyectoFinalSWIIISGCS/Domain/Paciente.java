@@ -3,6 +3,7 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -30,12 +31,14 @@ public class Paciente {
     private String apellido;
 
     @NotBlank(message = "El DNI es obligatorio")
-    @Size(max = 20, message = "El DNI debe tener como máximo 20 caracteres")
-    @Column(name = "dni", length = 20, nullable = false, unique = true)
+    @Size(max = 8, message = "El DNI debe tener como máximo 8 caracteres")
+    @Size(min = 8, message = "El DNI debe tener como mínimo 8 caracteres")
+    @Pattern(regexp = "\\d+", message = "El DNI debe contener solo números")
+    @Column(name = "dni", length = 8, nullable = false, unique = true)
     private String dni;
 
-    @Size(max = 20, message = "El teléfono debe tener como máximo 20 caracteres")
-    @Column(length = 20)
+    @Size(max = 9, message = "El teléfono debe tener como máximo 9 caracteres")
+    @Column(length = 9)
     private String telefono;
 
     @NotBlank(message = "El email es obligatorio")
