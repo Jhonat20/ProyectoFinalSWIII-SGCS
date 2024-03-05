@@ -53,7 +53,7 @@ public class HorarioController {
     @PostMapping
     public ResponseEntity<?> guardarHorario(@Valid @RequestBody Horario horario, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(GlobalResponse.error("Error en los datos proporcionados"));
+            return ResponseEntity.badRequest().body(GlobalResponse.error("Error en los datos proporcionados, revise porfavor"));
         } else {
             Horario nuevoHorario = horarioService.guardadHorario(horario);
             return ResponseEntity.ok(GlobalResponse.ok(nuevoHorario));
