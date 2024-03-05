@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -99,6 +100,18 @@ public class PacienteController {
         } else {
             Paciente pacienteActualizado = pacienteService.actualizarPaciente(id, paciente);
             return ResponseEntity.ok(GlobalResponse.ok(pacienteActualizado));
+        }
+    }
+
+    @PostMapping("/{idPaciente}/citas/{idCita}")
+    public ResponseEntity<?> agregarCitaAPaciente(@PathVariable Long idPaciente, @PathVariable Long idCita) {
+        try {
+            pacienteService.agregarCitaAPaciente(idPaciente, idCita);
+            return ResponseEntity.ok().body(Map.of("status", "ok", "message", "cita agregada exitosamente al Paciente."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.ok().body(Map.of("status", "error", "message", "Ha ocurrido un error al agregar la cita"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al agregar la cita al paciente.");
         }
     }
 }

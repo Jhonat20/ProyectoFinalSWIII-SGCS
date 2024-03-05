@@ -46,6 +46,6 @@ public class Cita {
 
 
     @ManyToOne
-    @JoinColumn(name = "id_paciente", nullable = false)
+    @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 }

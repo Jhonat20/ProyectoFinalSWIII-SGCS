@@ -1,5 +1,6 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -61,6 +62,7 @@ public class Paciente {
     private String grupoSanguineo;
 
     @OneToMany(mappedBy = "paciente")
+    @JsonIgnore
     private List<Cita> citas;
 
     @OneToOne(mappedBy = "paciente", cascade = CascadeType.ALL)

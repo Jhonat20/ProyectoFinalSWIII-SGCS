@@ -87,7 +87,7 @@ public class CitaServiceImp implements CitaService {
             citaExistente.setNombreDoctor(cita.getNombreDoctor());
             citaExistente.setDescripcion(cita.getDescripcion());
             citaExistente.setFechaHora(cita.getFechaHora());
-            citaExistente.setEstado(cita.getEstado());
+            //citaExistente.setEstado(cita.getEstado());
             // Actualiza otros campos según sea necesario.
             return citaRepository.save(citaExistente);
         } else {
