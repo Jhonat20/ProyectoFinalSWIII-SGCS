@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Clase controladora para gestionar entidades Especialidad.
+ */
 @RestController
 @RequestMapping("api/v1/especialidades")
 public class EspecialidadController {
@@ -24,6 +27,13 @@ public class EspecialidadController {
     @Autowired
     private EspecialidadService especialidadService;
 
+    /**
+     * Endpoint para listar todas las Especialidades.
+     *
+     * @param apiVersion La versión de la API especificada en el encabezado de la solicitud.
+     * @return ResponseEntity con una lista de Especialidades o un mensaje de error.
+     * @throws IllegalOperationException si ocurre una operación ilegal.
+     */
     @GetMapping
     public ResponseEntity<?> listarEspecialidades(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
         List<Especialidad> especialidades = especialidadService.listarEspecialidades();
@@ -32,6 +42,14 @@ public class EspecialidadController {
         return ResponseEntity.ok(GlobalResponse.ok(especialidades));
     }
 
+    /**
+     * Endpoint para registrar una nueva Especialidad.
+     *
+     * @param especialidad    Objeto Especialidad a registrar.
+     * @param bindingResult   BindingResult para validar el cuerpo de la solicitud.
+     * @return ResponseEntity con la Especialidad registrada o errores de validación.
+     * @throws IllegalOperationException si ocurre una operación ilegal.
+     */
     @PostMapping
     public ResponseEntity<?> registrarEspecialidad(@Valid @RequestBody Especialidad especialidad, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
@@ -43,6 +61,13 @@ public class EspecialidadController {
         }
     }
 
+    /**
+     * Endpoint para obtener una Especialidad específica por ID.
+     *
+     * @param id ID de la Especialidad a recuperar.
+     * @return ResponseEntity con la Especialidad recuperada o un mensaje de error.
+     * @throws IllegalOperationException si ocurre una operación ilegal.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerEspecialidad(@PathVariable Long id) throws IllegalOperationException {
         Optional<Especialidad> optionalEspecialidad = especialidadService.buscarEspecialidadPorId(id);
@@ -54,12 +79,28 @@ public class EspecialidadController {
         }
     }
 
+    /**
+     * Endpoint para eliminar una Especialidad específica por ID.
+     *
+     * @param id ID de la Especialidad a eliminar.
+     * @return ResponseEntity con un mensaje de éxito o un mensaje de error.
+     * @throws IllegalOperationException si ocurre una operación ilegal.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarEspecialidad(@PathVariable Long id) throws IllegalOperationException {
         especialidadService.eliminarEspecialidad(id);
         return ResponseEntity.ok(GlobalResponse.ok("Especialidad eliminada correctamente"));
     }
 
+    /**
+     * Endpoint para actualizar una Especialidad específica por ID.
+     *
+     * @param id              ID de la Especialidad a actualizar.
+     * @param especialidad    Objeto Especialidad actualizado.
+     * @param bindingResult   BindingResult para validar el cuerpo de la solicitud.
+     * @return ResponseEntity con la Especialidad actualizada o errores de validación.
+     * @throws IllegalOperationException si ocurre una operación ilegal.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarEspecialidad(@PathVariable Long id, @Valid @RequestBody Especialidad especialidad, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
