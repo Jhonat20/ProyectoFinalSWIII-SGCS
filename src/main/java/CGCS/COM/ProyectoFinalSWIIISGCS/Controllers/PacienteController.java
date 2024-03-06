@@ -31,15 +31,12 @@ public class PacienteController {
 
     /**
      * Lista todos los pacientes registrados.
-     * @param apiVersion La versión de la API especificada en el encabezado de la solicitud.
      * @return Una lista de pacientes junto con la versión de la API usada.
      */
     @GetMapping
-    public ResponseEntity<?> listarPacientes(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+    public ResponseEntity<?> listarPacientes() throws IllegalOperationException {
         List<Paciente> pacientes = pacienteService.listarPacientes();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("API-Version", apiVersion);
-        return ResponseEntity.ok().headers(headers).body(GlobalResponse.ok(pacientes));
+        return ResponseEntity.ok(GlobalResponse.ok(pacientes));
     }
 
     /**

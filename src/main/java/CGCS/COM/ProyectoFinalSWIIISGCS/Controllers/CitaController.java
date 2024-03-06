@@ -30,12 +30,11 @@ public class CitaController {
     /**
      * Lista todas las citas disponibles.
      *
-     * @param apiVersion Versión de la API solicitada por el cliente.
      * @return ResponseEntity con la lista de citas.
      * @throws IllegalOperationException Si ocurre alguna excepción durante la operación.
      */
     @GetMapping
-    public ResponseEntity<?> listarCitas(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+    public ResponseEntity<?> listarCitas() throws IllegalOperationException {
         List<Cita> citas = citaService.listarCitas();
         return ResponseEntity.ok(GlobalResponse.ok(citas));
     }

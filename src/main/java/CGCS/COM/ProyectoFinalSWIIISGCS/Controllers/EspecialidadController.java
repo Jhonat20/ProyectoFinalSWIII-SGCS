@@ -30,15 +30,12 @@ public class EspecialidadController {
     /**
      * Endpoint para listar todas las Especialidades.
      *
-     * @param apiVersion La versión de la API especificada en el encabezado de la solicitud.
      * @return ResponseEntity con una lista de Especialidades o un mensaje de error.
      * @throws IllegalOperationException si ocurre una operación ilegal.
      */
     @GetMapping
-    public ResponseEntity<?> listarEspecialidades(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+    public ResponseEntity<?> listarEspecialidades() throws IllegalOperationException {
         List<Especialidad> especialidades = especialidadService.listarEspecialidades();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("API-Version", apiVersion);
         return ResponseEntity.ok(GlobalResponse.ok(especialidades));
     }
 

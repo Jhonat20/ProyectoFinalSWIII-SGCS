@@ -1,0 +1,91 @@
+@startuml
+
+skinparam packageStyle rectangle
+
+package CGCS.COM.ProyectoFinalSWIIISGCS.Domain <<Rectangle>> {
+    class Administrativo {
+        Long idAdministrativo
+        String nombres
+        String apellidos
+        String dni
+        String telefono
+        String email
+        String cargo
+        List<Cita> citasAsignadas
+    }
+
+    class Cita {
+        Long idCita
+        Date fechaHora
+        String descripcion
+        String estado
+        Doctor doctorAsignado
+        Paciente paciente
+    }
+
+    class Doctor {
+        Long idDoctor
+        String nombres
+        String apellidos
+        String dni
+        String telefono
+        String email
+        List<Cita> citasProgramadas
+        Horario horario
+        Set<Especialidad> especialidades
+        Doctor supervisor
+        List<Doctor> supervisados
+    }
+
+    class Especialidad {
+        Long idEspecialidad
+        String nombre
+        String descripcion
+        Set<Doctor> doctoresEspecializados
+    }
+
+    class HistorialMedico {
+        Long idHistorialMedico
+        String diagnostico
+        String alergias
+        String cirugias
+        String enfermedadesPrevias
+        String medicamentos
+        Paciente paciente
+    }
+
+    class Horario {
+        Long idHorario
+        LocalDate dia
+        LocalTime horaInicio
+        LocalTime horaFin
+    }
+
+    class Paciente {
+        Long idPaciente
+        String nombre
+        String apellido
+        String dni
+        String telefono
+        String email
+        Date fechaNacimiento
+        String direccion
+        String grupoSanguineo
+        List<Cita> citas
+        HistorialMedico historialMedico
+    }
+
+    Administrativo "1" -- "*" Cita : "citasAsignadas"
+    Cita "1" -- "1" Doctor : "doctorAsignado"
+    Cita "1" -- "1" Paciente
+    Doctor "1" -- "*" Cita : "citasProgramadas"
+    Doctor "1" -- "0..1" Horario
+    Doctor "1" -- "*" Especialidad : "especialidades"
+    Doctor "0..1" -- "0..*" Doctor : "supervisor"
+    Doctor "0..*" -- "0..1" Doctor : "supervisados"
+    HistorialMedico "1" -- "0..1" Paciente
+    Paciente "1" -- "*" Cita : "citas"
+
+}
+
+@enduml

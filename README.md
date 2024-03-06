@@ -1,4 +1,4 @@
-# Proyecto Final Sistema Gestión Centro de Salud - Backend
+# Proyecto Final Sistema de Gestión de un Centro de Salud - Backend
 
 Este repositorio contiene el backend de un sistema de gestión para un centro de salud. El sistema está diseñado utilizando microservicios y construido con Maven.
 

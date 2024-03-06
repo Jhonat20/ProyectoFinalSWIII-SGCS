@@ -29,12 +29,12 @@ public class AdministrativoController {
     /**
      * Lista todas los Administrativos disponibles.
      *
-     * @param apiVersion Versión de la API solicitada por el cliente.
+
      * @return ResponseEntity con la lista de Administrativos.
      * @throws IllegalOperationException Si ocurre alguna excepción durante la operación.
      */
     @GetMapping
-    public ResponseEntity<?> listarAdministrativo(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+    public ResponseEntity<?> listarAdministrativo()throws IllegalOperationException {
         List<Administrativo> Administrativo = AdministrativoService.listarAdministrativo();
         return ResponseEntity.ok(GlobalResponse.ok(Administrativo));
     }

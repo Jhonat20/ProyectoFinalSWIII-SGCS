@@ -33,7 +33,6 @@ public class DoctorController {
     /**
      * Obtiene la lista de doctores.
      *
-     * @param apiVersion Versión de la API especificada en el encabezado de la solicitud.
      * @return ResponseEntity con una lista de doctores y encabezados apropiados.
      * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
      */
