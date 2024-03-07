@@ -3,7 +3,6 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Rest;
 import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.AdministrativoDTO;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Administrativo;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.AdministrativoService;
-import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
