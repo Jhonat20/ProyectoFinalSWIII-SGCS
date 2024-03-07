@@ -21,7 +21,7 @@ import java.util.Optional;
  * Controlador REST para manejar las operaciones relacionadas con los horarios.
  */
 @RestController
-@RequestMapping("api/v1/horario")
+@RequestMapping("api/v1/Horario")
 public class HorarioController {
 
     @Autowired

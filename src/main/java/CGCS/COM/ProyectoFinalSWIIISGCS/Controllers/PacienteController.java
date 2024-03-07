@@ -23,7 +23,7 @@ import java.util.Optional;
  * Maneja la creación, consulta, actualización y eliminación de registros de pacientes.
  */
 @RestController
-@RequestMapping("api/v1/pacientes")
+@RequestMapping("api/v1/Paciente")
 public class PacienteController {
 
     @Autowired
