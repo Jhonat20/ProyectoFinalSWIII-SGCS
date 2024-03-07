@@ -1,12 +1,11 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
-import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.DoctorDTO;
-import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
-import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
+import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.PacienteDTO;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Services.PacienteService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import org.modelmapper.ModelMapper;
-import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,30 +14,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @file: DoctorRest
+ * @file: PacienteRest
  * @author: (c)jhons
- * @created: 06/03/2024 23:50
+ * @created: 07/03/2024 2:15
  */
 
 @RestController
-@RequestMapping("/api/v1/doctor")
-public class DoctorRest {
+@RequestMapping("/api/v1/paciente")
+public class PacienteRest {
 
-    @Autowired
-    private DoctorService doctorService;
-    @Autowired
+@Autowired
+    private PacienteService pacienteService;
+
+@Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping
-    public ResponseEntity<?> listarDoctores() {
+@GetMapping
+    public ResponseEntity<?> listarPacientes() {
         try {
-            List<Doctor> doctores = doctorService.listarDoctores();
-            List<DoctorDTO> doctorDTOs = doctores.stream()
-                    .map(doctor -> modelMapper.map(doctor, DoctorDTO.class))
+            List<Paciente> pacientes = pacienteService.listarPacientes();
+            List<PacienteDTO> pacienteDTOs = pacientes.stream()
+                    .map(paciente -> modelMapper.map(paciente, PacienteDTO.class))
                     .collect(Collectors.toList());
 
             // Utilizando GlobalResponse.ok() para crear una respuesta exitosa
-            return ResponseEntity.ok(GlobalResponse.ok(doctorDTOs));
+            return ResponseEntity.ok(GlobalResponse.ok(pacienteDTOs));
         } catch (Exception e) {
             // Utilizando GlobalResponse.error() para crear una respuesta de error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(GlobalResponse.error("Error interno del servidor"));
@@ -46,4 +46,3 @@ public class DoctorRest {
     }
 
 }
-
