@@ -17,5 +17,5 @@ public interface DoctorService {
 
     Doctor actualizarDoctor(Long id, Doctor doctor) throws IllegalOperationException;
 
-
+    Doctor asignarCitaDoctor(Long doctorId, Long citaId) throws IllegalOperationException;
 }

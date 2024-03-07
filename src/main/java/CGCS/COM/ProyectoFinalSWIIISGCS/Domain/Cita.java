@@ -1,5 +1,6 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -34,10 +35,12 @@ public class Cita {
 
     @ManyToOne
     @JoinColumn(name = "id_doctor")
+    @JsonBackReference
     private Doctor doctor;
 
 
     @ManyToOne
     @JoinColumn(name = "id_paciente")
+    @JsonIgnore
     private Paciente paciente;
 }

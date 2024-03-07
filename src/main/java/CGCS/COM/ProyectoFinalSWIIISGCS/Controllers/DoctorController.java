@@ -112,4 +112,11 @@ public class DoctorController {
         }
     }
 
+
+    @PostMapping("/{doctorId}/citas/{citaId}")
+    public ResponseEntity<?> asignarCitaDoctor(@PathVariable Long doctorId, @PathVariable Long citaId) throws IllegalOperationException {
+        Doctor doctor = doctorService.asignarCitaDoctor(doctorId, citaId);
+        return ResponseEntity.ok(GlobalResponse.ok(doctor));
+    }
+
 }

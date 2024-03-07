@@ -45,7 +45,7 @@ public class Doctor {
     private String email;
 
     @OneToMany(mappedBy = "doctor")
-    @JsonIgnore
+    @JsonManagedReference
     private List<Cita> citas;
 
     @ManyToOne
@@ -61,5 +61,18 @@ public class Doctor {
     )
     @JsonIgnore
     private Set<Especialidad> especialidades;
+
+
+
+
+
+
+
+    //*********************
+
+    public void agregarCita(Cita cita) {
+        citas.add(cita);
+        cita.setDoctor(this);
+    }
 
 }

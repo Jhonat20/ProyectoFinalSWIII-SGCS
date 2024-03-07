@@ -1,7 +1,9 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HorarioRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
@@ -18,7 +20,7 @@ public class DoctorServiceImp implements DoctorService {
     @Autowired
     public DoctorRepository doctorRepository;
     @Autowired
-    public HorarioRepository horarioRepository;
+    public CitaRepository citaRepository;
     @Override
     public List<Doctor> listarDoctores() {
         return doctorRepository.findAll();
@@ -58,5 +60,37 @@ public class DoctorServiceImp implements DoctorService {
             throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
         }
     }
+
+    @Override
+    public Doctor asignarCitaDoctor(Long doctorId, Long citaId) throws IllegalOperationException {
+        // Obtener el doctor por su ID
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+
+            // Obtener la cita por su ID
+            Optional<Cita> optionalCita = citaRepository.findById(citaId);
+            if (optionalCita.isPresent()) {
+                Cita cita = optionalCita.get();
+
+                // Verificar si la cita ya está asignada a otro doctor
+                if (cita.getDoctor() != null) {
+                    throw new IllegalOperationException("La cita ya está asignada a otro doctor");
+                }
+
+                // Asignar la cita al doctor
+                doctor.agregarCita(cita);
+
+                // Guardar el doctor actualizado en la base de datos
+                return doctorRepository.save(doctor);
+            } else {
+                throw new IllegalOperationException("No se encontró la cita con el ID proporcionado: " + citaId);
+            }
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
+        }
+    }
+
+
 
 }
