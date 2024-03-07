@@ -1,7 +1,8 @@
-package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
+package CGCS.COM.ProyectoFinalSWIIISGCS.Rest;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.DoctorDTO;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import org.modelmapper.ModelMapper;
@@ -30,19 +31,14 @@ public class DoctorRest {
     private ModelMapper modelMapper;
 
     @GetMapping
-    public ResponseEntity<?> listarDoctores() {
-        try {
-            List<Doctor> doctores = doctorService.listarDoctores();
-            List<DoctorDTO> doctorDTOs = doctores.stream()
-                    .map(doctor -> modelMapper.map(doctor, DoctorDTO.class))
-                    .collect(Collectors.toList());
+    public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
+        List<Doctor> doctores = doctorService.listarDoctores();
+        List<DoctorDTO> doctorDTOs = doctores.stream()
+                .map(doctor -> modelMapper.map(doctor, DoctorDTO.class))
+                .collect(Collectors.toList());
 
-            // Utilizando GlobalResponse.ok() para crear una respuesta exitosa
-            return ResponseEntity.ok(GlobalResponse.ok(doctorDTOs));
-        } catch (Exception e) {
-            // Utilizando GlobalResponse.error() para crear una respuesta de error
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(GlobalResponse.error("Error interno del servidor"));
-        }
+        // Utilizando GlobalResponse.ok() para crear una respuesta exitosa
+        return ResponseEntity.ok(GlobalResponse.ok(doctorDTOs));
     }
 
 }

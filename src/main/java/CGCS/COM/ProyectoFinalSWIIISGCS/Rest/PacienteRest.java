@@ -1,4 +1,4 @@
-package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
+package CGCS.COM.ProyectoFinalSWIIISGCS.Rest;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.PacienteDTO;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
