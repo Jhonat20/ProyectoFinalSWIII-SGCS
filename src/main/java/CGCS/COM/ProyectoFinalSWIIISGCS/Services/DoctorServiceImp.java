@@ -1,7 +1,9 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HorarioRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class DoctorServiceImp implements DoctorService {
 
     @Autowired
     public DoctorRepository doctorRepository;
+    @Autowired
+    public HorarioRepository horarioRepository;
     @Override
     public List<Doctor> listarDoctores() {
         return doctorRepository.findAll();
@@ -54,4 +58,30 @@ public class DoctorServiceImp implements DoctorService {
             throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
         }
     }
+
+    @Override
+    public Doctor asignarHorario(Long doctorId, Long horarioId) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+            // Obtener el horario usando su ID
+            Optional<Horario> optionalHorario = horarioRepository.findById(horarioId);
+            if (optionalHorario.isPresent()) {
+                Horario horario = optionalHorario.get();
+                // Validar si el doctor ya tiene un horario asignado para ese día
+                if (doctor.getHorario() != null && doctor.getHorario().getDia().equals(horario.getDia())) {
+                    throw new IllegalOperationException("El doctor ya tiene un horario asignado para ese día: " + doctor.getHorario().getDia());
+                }
+                // Asignar el horario al doctor
+                doctor.setHorario(horario);
+                // Guardar el doctor actualizado en la base de datos
+                return doctorRepository.save(doctor);
+            } else {
+                throw new IllegalOperationException("No se encontró el horario con el ID proporcionado: " + horarioId);
+            }
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
+        }
+    }
+
 }

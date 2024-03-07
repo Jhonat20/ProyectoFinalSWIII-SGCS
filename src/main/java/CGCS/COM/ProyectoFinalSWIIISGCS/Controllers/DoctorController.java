@@ -112,4 +112,10 @@ public class DoctorController {
         }
     }
 
+    @PostMapping("/{idDoctor}/horarios/{idHorario}")
+    public ResponseEntity<?> asignarHorario(@PathVariable Long idDoctor, @PathVariable Long idHorario) throws IllegalOperationException {
+        Doctor doctor = doctorService.asignarHorario(idDoctor, idHorario);
+        return ResponseEntity.ok(GlobalResponse.ok(doctor));
+    }
+
 }

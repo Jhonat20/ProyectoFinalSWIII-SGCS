@@ -1,4 +1,7 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,10 +45,12 @@ public class Doctor {
     private String email;
 
     @OneToMany(mappedBy = "doctor")
+    @JsonIgnore
     private List<Cita> citas;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "id_horario", referencedColumnName = "idHorario")
+    @ManyToOne
+    @JoinColumn(name = "id_horario")
+    @JsonIgnore
     private Horario horario;
 
     @ManyToMany(cascade = { CascadeType.ALL })
@@ -54,6 +59,7 @@ public class Doctor {
             joinColumns = { @JoinColumn(name = "id_doctor") },
             inverseJoinColumns = { @JoinColumn(name = "id_especialidad") }
     )
+    @JsonIgnore
     private Set<Especialidad> especialidades;
 
 }
