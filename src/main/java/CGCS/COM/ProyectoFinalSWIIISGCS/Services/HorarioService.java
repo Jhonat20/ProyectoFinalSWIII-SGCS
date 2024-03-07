@@ -20,4 +20,6 @@ public interface HorarioService {
     void Eliminar(Long id);
 
     Horario actualizarParcial(Long id, Map<String, Object> cambios) throws IllegalOperationException;
+
+    Horario asignarDoctor(Long horarioId, Long doctorId) throws IllegalOperationException;
 }

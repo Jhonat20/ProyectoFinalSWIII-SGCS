@@ -16,7 +16,4 @@ public interface DoctorService {
     void eliminarDoctor(Long id) throws IllegalOperationException;
 
     Doctor actualizarDoctor(Long id, Doctor doctor) throws IllegalOperationException;
-    Doctor asignarHorario(Long doctorId, Long horarioId) throws IllegalOperationException;
-
-
 }

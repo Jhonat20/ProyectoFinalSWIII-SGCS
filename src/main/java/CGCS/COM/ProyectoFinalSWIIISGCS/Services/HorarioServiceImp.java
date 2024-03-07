@@ -1,6 +1,8 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HorarioRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.ErrorMessage;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
@@ -25,6 +27,8 @@ public class HorarioServiceImp implements HorarioService{
     @Autowired
     private HorarioRepository horarioRepository;
 
+    @Autowired
+    private DoctorRepository doctorRepository;
     /**
      * Obtiene una lista de todos los horarios.
      *
@@ -139,8 +143,27 @@ public class HorarioServiceImp implements HorarioService{
         return horarioRepository.save(horario);
     }
 
-
-
+    @Override
+    public Horario asignarDoctor(Long horarioId, Long doctorId) throws IllegalOperationException {
+        Optional<Horario> optionalHorario = horarioRepository.findById(horarioId);
+        if (optionalHorario.isPresent()) {
+            Horario horario = optionalHorario.get();
+            Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
+            if (optionalDoctor.isPresent()) {
+                Doctor doctor = optionalDoctor.get();
+                if (doctor.getHorario() != null && doctor.getHorario().getDia().equals(horario.getDia())) {
+                    throw new IllegalOperationException("El doctor ya tiene un horario asignado para ese día: " + doctor.getHorario().getDia());
+                }
+                doctor.setHorario(horario);
+                doctorRepository.save(doctor); // Guardar el doctor actualizado en la base de datos
+                return horario; // Devolver el horario
+            } else {
+                throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
+            }
+        } else {
+            throw new IllegalOperationException("No se encontró el horario con el ID proporcionado: " + horarioId);
+        }
+    }
 
 
     /**

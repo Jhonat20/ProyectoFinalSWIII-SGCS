@@ -59,29 +59,4 @@ public class DoctorServiceImp implements DoctorService {
         }
     }
 
-    @Override
-    public Doctor asignarHorario(Long doctorId, Long horarioId) throws IllegalOperationException {
-        Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
-        if (optionalDoctor.isPresent()) {
-            Doctor doctor = optionalDoctor.get();
-            // Obtener el horario usando su ID
-            Optional<Horario> optionalHorario = horarioRepository.findById(horarioId);
-            if (optionalHorario.isPresent()) {
-                Horario horario = optionalHorario.get();
-                // Validar si el doctor ya tiene un horario asignado para ese día
-                if (doctor.getHorario() != null && doctor.getHorario().getDia().equals(horario.getDia())) {
-                    throw new IllegalOperationException("El doctor ya tiene un horario asignado para ese día: " + doctor.getHorario().getDia());
-                }
-                // Asignar el horario al doctor
-                doctor.setHorario(horario);
-                // Guardar el doctor actualizado en la base de datos
-                return doctorRepository.save(doctor);
-            } else {
-                throw new IllegalOperationException("No se encontró el horario con el ID proporcionado: " + horarioId);
-            }
-        } else {
-            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
-        }
-    }
-
 }

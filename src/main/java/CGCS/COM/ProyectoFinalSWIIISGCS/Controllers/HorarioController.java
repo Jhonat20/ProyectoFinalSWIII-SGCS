@@ -139,5 +139,13 @@ public class HorarioController {
         } else {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró el horario con el ID proporcionado"));
         }
+
     }
+
+    @PostMapping("/{idHorario}/horarios/{idDoctor}")
+    public ResponseEntity<?> asignarHorario(@PathVariable Long idHorario, @PathVariable Long idDoctor) throws IllegalOperationException {
+        Horario horario = horarioService.asignarDoctor(idHorario, idDoctor);
+        return ResponseEntity.ok(GlobalResponse.ok(horario));
+    }
+
 }
