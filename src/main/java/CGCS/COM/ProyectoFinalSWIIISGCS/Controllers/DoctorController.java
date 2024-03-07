@@ -1,6 +1,8 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Ensamblardor_Hateoas.Doctor.DoctorResource;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Ensamblardor_Hateoas.Doctor.DoctorResourceAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
@@ -30,6 +32,9 @@ public class DoctorController {
     @Autowired
     private DoctorService doctorService;
 
+    @Autowired
+    private DoctorResourceAssembler doctorResourceAssembler;
+
     /**
      * Obtiene la lista de doctores.
      *
@@ -39,7 +44,11 @@ public class DoctorController {
     @GetMapping
     public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
         List<Doctor> doctores = doctorService.listarDoctores();
-        return ResponseEntity.ok(GlobalResponse.ok(doctores));
+        List<DoctorResource> doctorResources = new ArrayList<>();
+        for (Doctor doctor : doctores) {
+            doctorResources.add(doctorResourceAssembler.toModel(doctor));
+        }
+        return ResponseEntity.ok(GlobalResponse.ok(doctorResources));
     }
 
     /**

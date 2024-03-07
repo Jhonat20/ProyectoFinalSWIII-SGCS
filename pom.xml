@@ -76,6 +76,10 @@
 			<version>7.0.1.Final</version>
 		</dependency>
 
+		<!-- SWAGGER -->
+
+
+
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
