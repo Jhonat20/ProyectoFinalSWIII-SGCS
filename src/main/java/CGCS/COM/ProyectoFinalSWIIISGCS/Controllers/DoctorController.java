@@ -24,7 +24,7 @@ import java.util.*;
  * @since 2024-03-03
  */
 @RestController
-@RequestMapping("api/v1/doctores")
+@RequestMapping("api/v1/Doctor")
 public class DoctorController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.Optional;
  * Proporciona endpoints para operaciones CRUD sobre citas.
  */
 @RestController
-@RequestMapping("api/v1/citas")
+@RequestMapping("api/v1/Citas")
 public class CitaController {
 
     @Autowired

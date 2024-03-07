@@ -21,7 +21,7 @@ import java.util.Optional;
  * Clase controladora para gestionar entidades Especialidad.
  */
 @RestController
-@RequestMapping("api/v1/especialidades")
+@RequestMapping("api/v1/Especialidad")
 public class EspecialidadController {
 
     @Autowired

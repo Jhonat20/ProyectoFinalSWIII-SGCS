@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @created: 7/03/2024
  */
 @RestController
-@RequestMapping("/api/v1/Cita")
+@RequestMapping("/api/v1/cita")
 public class CitaRest {
     @Autowired
     private CitaService citaService;
