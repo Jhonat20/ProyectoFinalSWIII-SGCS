@@ -31,12 +31,55 @@ public class PacienteController {
 
     /**
      * Lista todos los pacientes registrados.
+     * @param apiVersion La versión de la API especificada en el encabezado de la solicitud.
      * @return Una lista de pacientes junto con la versión de la API usada.
      */
     @GetMapping
-    public ResponseEntity<?> listarPacientes() throws IllegalOperationException {
+    public ResponseEntity<?> listarPacientes(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
+        if (!esVersionCompatible(apiVersion)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(GlobalResponse.error("La versión de la API no es compatible."));
+        }
+
         List<Paciente> pacientes = pacienteService.listarPacientes();
-        return ResponseEntity.ok(GlobalResponse.ok(pacientes));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("API-Version", apiVersion);
+        return ResponseEntity.ok().headers(headers).body(GlobalResponse.ok(pacientes));
+    }
+
+    private boolean esVersionCompatible(String apiVersion) {
+        // Versión actual de la API
+        String versionActual = "v0.1.0";
+
+        // Eliminar el prefijo "v" y dividir la versión en sus componentes
+        String[] partesVersionActual = versionActual.substring(1).split("\\.");
+        String[] partesVersionSolicitada = apiVersion.substring(1).split("\\.");
+
+        // Convertir los componentes de la versión en números enteros
+        int majorActual = Integer.parseInt(partesVersionActual[0]);
+        int minorActual = Integer.parseInt(partesVersionActual[1]);
+        int patchActual = Integer.parseInt(partesVersionActual[2]);
+
+        int majorSolicitada = Integer.parseInt(partesVersionSolicitada[0]);
+        int minorSolicitada = Integer.parseInt(partesVersionSolicitada[1]);
+        int patchSolicitada = Integer.parseInt(partesVersionSolicitada[2]);
+
+        // Comparar los componentes de la versión
+        if (majorActual > majorSolicitada) {
+            return false;  // La versión actual es mayor que la solicitada
+        } else if (majorActual < majorSolicitada) {
+            return true;  // La versión actual es menor que la solicitada
+        } else {
+            // Si las partes principales son iguales, comparar partes menores
+            if (minorActual > minorSolicitada) {
+                return false;  // La versión actual es mayor que la solicitada
+            } else if (minorActual < minorSolicitada) {
+                return true;  // La versión actual es menor que la solicitada
+            } else {
+                // Si las partes principales y menores son iguales, comparar partes de revisión
+                return patchActual >= patchSolicitada;  // Si la versión actual es mayor o igual que la solicitada
+            }
+        }
     }
 
     /**
@@ -111,17 +154,4 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al agregar la cita al paciente.");
         }
     }
-
-    @PostMapping("/{idPaciente}/historiales-medicos/{idHistorialMedico}")
-    public ResponseEntity<?> asignarHistorialMedicoAPaciente(@PathVariable Long idPaciente, @PathVariable Long idHistorialMedico) {
-        try {
-            pacienteService.agregarHistorialMedicoAPaciente(idPaciente, idHistorialMedico);
-            return ResponseEntity.ok().body(Map.of("status", "ok", "message", "Historial médico asignado exitosamente al paciente."));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.ok().body(Map.of("status", "error", "message", "Ha ocurrido un error al asignar el historial médico al paciente"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al asignar el historial médico al paciente.");
-        }
-    }
-
 }
