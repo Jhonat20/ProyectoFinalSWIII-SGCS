@@ -38,6 +38,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         );
         return getAuthenticationManager().authenticate(usernamePAT);
 
+
     }
         @Override
         protected void successfulAuthentication (HttpServletRequest request,
