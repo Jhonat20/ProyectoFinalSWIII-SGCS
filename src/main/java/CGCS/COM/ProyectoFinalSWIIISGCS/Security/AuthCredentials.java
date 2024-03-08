@@ -4,8 +4,9 @@ import lombok.Data;
 
 /**
  * @file: AuthCredentials
- * @author: Angel Arribasplata
- * @created: 8/03/2024
+ * @author: EdwarMoya
+ * @created: 08/03/2024
+ * @HoraCreated: 12:29 p. m.
  */
 @Data
 public class AuthCredentials {
