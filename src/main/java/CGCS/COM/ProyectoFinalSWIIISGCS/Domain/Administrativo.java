@@ -25,23 +25,23 @@ public class Administrativo {
     @Size(max = 255, message = "Los nombres debe tener como máximo 255 caracteres")
     @Column(length = 255, nullable = false)
     private String nombres;
-
-    /** Apellidos del administrativo */
-    @NotBlank(message = "Los apellidos son obligatorios")
-    @Size(max = 255, message = "Los apellidos deben tener como máximo 255 caracteres")
-    @Column(length = 255, nullable = false)
-    private String apellidos;
-
-    /** DNI del administrativo */
-    @NotBlank(message = "El DNI es obligatorio")
-    @Size(max = 8, message = "El DNI debe tener como máximo 8 caracteres")
-    @Column(length = 8, nullable = false, unique = true)
-    private String dni;
-
-    /** Teléfono del administrativo */
-    @Size(max = 20, message = "El teléfono debe tener como máximo 20 caracteres")
-    @Column(length = 20)
-    private String telefono;
+//
+//    /** Apellidos del administrativo */
+//    @NotBlank(message = "Los apellidos son obligatorios")
+//    @Size(max = 255, message = "Los apellidos deben tener como máximo 255 caracteres")
+//    @Column(length = 255, nullable = false)
+//    private String apellidos;
+//
+//    /** DNI del administrativo */
+//    @NotBlank(message = "El DNI es obligatorio")
+//    @Size(max = 8, message = "El DNI debe tener como máximo 8 caracteres")
+//    @Column(length = 8, nullable = false, unique = true)
+//    private String dni;
+//
+//    /** Teléfono del administrativo */
+//    @Size(max = 20, message = "El teléfono debe tener como máximo 20 caracteres")
+//    @Column(length = 20)
+//    private String telefono;
 
     /** Correo electrónico del administrativo */
     @NotBlank(message = "El email es obligatorio")
@@ -50,7 +50,12 @@ public class Administrativo {
     @Column(length = 255, nullable = false, unique = true)
     private String email;
 
-    /** Cargo del administrativo */
-    @Column(length = 255)
-    private String cargo;
+//    /** Cargo del administrativo */
+//    @Column(length = 255)
+//    private String cargo;
+//
+    @NotBlank(message = "El email es obligatorio")
+    @Size(max = 255)
+    private String password;
+
 }

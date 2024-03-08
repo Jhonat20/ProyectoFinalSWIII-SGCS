@@ -6,10 +6,10 @@ import lombok.Data;
 public class AdministrativoDTO {
     private Long idAdministrativo;
     private String nombres;
-    private String apellidos;
-    private String dni;
-    private String telefono;
+    //private String apellidos;
+   // private String dni;
+    //private String telefono;
     private String email;
-    private String cargo;
+    //private String cargo;
 
 }
