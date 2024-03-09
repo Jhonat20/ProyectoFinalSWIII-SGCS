@@ -83,9 +83,9 @@ public class AdministrativoServiceImp implements AdministrativoService{
         if (optionalAdministrativo.isPresent()) {
             Administrativo AdministrativoExistente = optionalAdministrativo.get();
             AdministrativoExistente.setNombres(Administrativo.getNombres());
-            AdministrativoExistente.setApellidos(Administrativo.getApellidos());
+            //AdministrativoExistente.setApellidos(Administrativo.getApellidos());
             AdministrativoExistente.setEmail(Administrativo.getEmail());
-            AdministrativoExistente.setTelefono(Administrativo.getTelefono());
+            //AdministrativoExistente.setTelefono(Administrativo.getTelefono());
 
             // Actualiza otros campos según sea necesario.
             return AdministrativoRepository.save(AdministrativoExistente);
