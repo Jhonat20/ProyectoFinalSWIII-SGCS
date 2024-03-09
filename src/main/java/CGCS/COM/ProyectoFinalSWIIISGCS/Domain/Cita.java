@@ -5,8 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -25,17 +28,15 @@ public class Cita {
     @Column(name = "id_cita") // Mapea el campo al nombre de la columna especificada en la base de datos.
     private Long idCita; // Identificador único para la cita.
 
-    @Temporal(TemporalType.TIMESTAMP) // Especifica el tipo de fecha que se espera (con hora exacta).
-    @Column(name = "fecha_hora", nullable = false) // Indica que la columna no puede ser nula.
-    @FutureOrPresent(message = "La fecha de la cita debe ser en el presente o en el futuro") // Valida que la fecha de la cita no sea pasada.
-    private Date fechaHora; // Almacena la fecha y hora de la cita.
+    private LocalDate fecha;
+    private LocalTime hora;
 
     @NotBlank(message = "La descripción es obligatoria") // Asegura que la descripción no sea nula ni esté en blanco.
     @Column(nullable = false) // Indica que la columna no puede ser nula.
     private String descripcion; // Descripción de la cita.
 
     @NotBlank(message = "El estado de la cita es obligatorio") // Asegura que el estado no sea nulo ni esté en blanco.
-    @Column(name = "estado", nullable = false) // Indica que la columna no puede ser nula.
+    @Column(name = "estado") // Indica que la columna no puede ser nula.
     private String estado; // Estado actual de la cita (por ejemplo: "confirmado", "cancelado").
 
     @ManyToOne // Establece una relación muchos a uno con la entidad Doctor.
@@ -47,4 +48,24 @@ public class Cita {
     @JoinColumn(name = "id_paciente") // Especifica la columna de unión con la clave foránea a Paciente.
     @JsonIgnore // Evita que el paciente sea incluido en la serialización JSON.
     private Paciente paciente; // Referencia al paciente asignado a la cita.
+
+
+
+
+    //**********Metodo adicional**************//
+
+    @PrePersist
+    public void prePersist() {
+        if (fecha == null) {
+            fecha = LocalDate.now();  // Fecha de creación por defecto
+        }
+        if (hora == null) {
+            hora = LocalTime.now();  // Hora actual del servidor
+        }
+        if (estado == null) {
+            estado = "Pendiente";  // Estado por defecto
+        }
+    }
+
+
 }

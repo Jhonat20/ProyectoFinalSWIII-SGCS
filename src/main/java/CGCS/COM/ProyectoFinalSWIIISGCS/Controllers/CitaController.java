@@ -1,20 +1,30 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModel;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModelAssembler;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.CitaService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Controlador para la gestión de citas en la aplicación.
@@ -26,6 +36,8 @@ public class CitaController {
 
     @Autowired
     private CitaService citaService; // Servicio para operaciones de citas.
+    @Autowired
+    private CitaModelAssembler citaModelAssembler;
 
     /**
      * Lista todas las citas disponibles.
@@ -36,7 +48,21 @@ public class CitaController {
     @GetMapping
     public ResponseEntity<?> listarCitas() throws IllegalOperationException {
         List<Cita> citas = citaService.listarCitas();
-        return ResponseEntity.ok(GlobalResponse.ok(citas));
+        List<EntityModel<CitaModel>> citaModels = new ArrayList<>();
+        if(citas.isEmpty()){
+            return ResponseEntity.ok(GlobalResponse.error("No hay citas registradas"));
+        }else{
+        for (Cita cita : citas) {
+            CitaModel citaModel = citaModelAssembler.toModel(cita);
+            Link selfLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withSelfRel();
+            EntityModel<CitaModel> entityModel = EntityModel.of(citaModel, selfLink);
+            citaModels.add(entityModel);
+        }
+        CollectionModel<EntityModel<CitaModel>> collectionModel = CollectionModel.of(citaModels);
+        Link link = linkTo(methodOn(CitaController.class).listarCitas()).withSelfRel();
+        collectionModel.add(link);
+        return ResponseEntity.ok(collectionModel);
+        }
     }
 
     /**
@@ -54,7 +80,10 @@ public class CitaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Cita nuevaCita = citaService.registrarCita(cita);
-            return ResponseEntity.ok(GlobalResponse.ok(nuevaCita));
+            CitaModel citaModel = citaModelAssembler.toModel(nuevaCita);
+            Link AllCitasLink = linkTo(methodOn(CitaController.class).listarCitas()).withRel("Ver lista Citas");
+            citaModel.add(AllCitasLink);
+            return ResponseEntity.ok((citaModel));
         }
     }
 
@@ -69,7 +98,12 @@ public class CitaController {
     public ResponseEntity<?> obtenerCita(@PathVariable Long id) throws IllegalOperationException {
         Optional<Cita> optionalCita = citaService.obtenerCitaPorId(id);
         if (optionalCita.isPresent()) {
-            return ResponseEntity.ok(GlobalResponse.ok(optionalCita.get()));
+            Cita cita = optionalCita.get();
+            CitaModel citaModel = citaModelAssembler.toModel(cita);
+            Link AllCitasLink = linkTo(methodOn(CitaController.class).listarCitas()).withRel("Ver lista Citas");
+            citaModel.add(AllCitasLink);
+            return ResponseEntity.ok(citaModel);
+
         } else {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró la cita con el ID proporcionado"));
         }
@@ -85,7 +119,8 @@ public class CitaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarCita(@PathVariable Long id) throws IllegalOperationException {
         citaService.eliminarCita(id);
-        return ResponseEntity.ok(GlobalResponse.ok("Cita eliminada correctamente"));
+        Link AllCitasLink = linkTo(methodOn(CitaController.class).listarCitas()).withRel("Ver lista Citas");
+        return ResponseEntity.ok(AllCitasLink);
     }
 
     /**
@@ -104,7 +139,8 @@ public class CitaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Cita citaActualizada = citaService.actualizarCita(id, cita);
-            return ResponseEntity.ok(GlobalResponse.ok(citaActualizada));
+            DoctorModel doctorModel = new DoctorModel();
+            return ResponseEntity.ok(doctorModel);
         }
     }
 }

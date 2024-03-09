@@ -7,10 +7,13 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HorarioRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,9 @@ public class DoctorServiceImp implements DoctorService {
     public DoctorRepository doctorRepository;
     @Autowired
     public CitaRepository citaRepository;
+
+    @Autowired
+    public HorarioRepository horarioRepository;
     @Override
     public List<Doctor> listarDoctores() {
         return doctorRepository.findAll();
@@ -86,10 +92,49 @@ public class DoctorServiceImp implements DoctorService {
             } else {
                 throw new IllegalOperationException("No se encontró la cita con el ID proporcionado: " + citaId);
             }
+
         } else {
             throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
         }
     }
+
+
+
+
+//    //*********************************Metodo para eliminar horarios pasados**************************
+//    @PostConstruct
+//    public void eliminarHorariosPasados() {
+//        // Obtén todos los doctores
+//        List<Doctor> doctores = doctorRepository.findAll();
+//
+//        // Para cada doctor
+//        for (Doctor doctor : doctores) {
+//            // Obtén los horarios del doctor
+//            List<Horario> horarios = doctor.getHorario();
+//
+//            // Crea una lista para almacenar los horarios que se van a eliminar
+//            List<Horario> horariosAEliminar = new ArrayList<>();
+//
+//            // Para cada horario
+//            for (Horario horario : horarios) {
+//                // Si la fecha del horario es anterior a la fecha actual
+//                if (horario.getDia().isBefore(LocalDate.now())) {
+//                    // Añade el horario a la lista de horarios a eliminar
+//                    horariosAEliminar.add(horario);
+//                }
+//            }
+//
+//            // Desasigna los horarios del doctor
+//            horarios.removeAll(horariosAEliminar);
+//            doctor.setHorario(horarios);
+//            doctorRepository.save(doctor);
+//
+//            // Ahora puedes eliminar los horarios
+//            for (Horario horario : horariosAEliminar) {
+//                horarioRepository.delete(horario);
+//            }
+//        }
+//    }
 
 
 

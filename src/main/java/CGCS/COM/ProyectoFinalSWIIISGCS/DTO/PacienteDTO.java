@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @file: PacienteDTO
- * @author: (c)jhons
+ * @author: (c)Jhon Bravo
  * @created: 06/03/2024 22:04
  */
 

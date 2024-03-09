@@ -1,6 +1,7 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import java.util.List;
 import java.util.Optional;
@@ -18,4 +19,6 @@ public interface DoctorService {
     Doctor actualizarDoctor(Long id, Doctor doctor) throws IllegalOperationException;
 
     Doctor asignarCitaDoctor(Long doctorId, Long citaId) throws IllegalOperationException;
+
+
 }

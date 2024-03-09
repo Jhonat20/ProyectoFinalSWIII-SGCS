@@ -2,8 +2,6 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.DTO;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Especialidad;
-import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import java.util.List;
 import java.util.Set;

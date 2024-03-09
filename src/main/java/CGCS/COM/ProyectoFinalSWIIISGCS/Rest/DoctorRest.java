@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * @file: DoctorRest
- * @author: (c)jhons
+ * @author: (c)Jhon Bravo
  * @created: 06/03/2024 23:50
  */
 
