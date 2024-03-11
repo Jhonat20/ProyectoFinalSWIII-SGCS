@@ -64,8 +64,8 @@ public class EspecialidadController {
             especialidadModels.add(especialidadEntityModel);
         }
         CollectionModel<EntityModel<EspecialidadModel>> collectionModel = CollectionModel.of(especialidadModels);
-        Link link = linkTo(methodOn(EspecialidadController.class).listarEspecialidades(apiVersion)).withSelfRel().expand(apiVersion);
-        collectionModel.add(link);
+        Link allEspecialidadeslink= linkTo(methodOn(EspecialidadController.class).listarEspecialidades(apiVersion)).withSelfRel().expand(apiVersion);
+        collectionModel.add(allEspecialidadeslink);
         ApiResponseHateos response = ApiResponseHateos.ok(collectionModel, "Especialidades listadas con éxito");
         return ResponseEntity.ok(response);
     }
@@ -82,16 +82,15 @@ public class EspecialidadController {
     public ResponseEntity<?> registrarEspecialidad(@Valid @RequestHeader("Api-Version") String apiVersion, @RequestBody Especialidad especialidad, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
             Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
-            ApiResponseHateos response = ApiResponseHateos.error("Error en la validación de los datos");
-            response.setData(errores);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            ResponseEntity.ok(errores);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verifique los datos ingresados");
         } else {
             Especialidad nuevaEspecialidad = especialidadService.registrarEspecialidad(especialidad);
             EspecialidadModel especialidadModel = especialidadModelAssembler.toModel(nuevaEspecialidad);
             Link AllEspecialidadesLink = linkTo(methodOn(EspecialidadController.class).listarEspecialidades(apiVersion)).withRel("Ver todas Especialidades").expand(apiVersion);
             especialidadModel.add(AllEspecialidadesLink);
-            ApiResponseHateos response = ApiResponseHateos.ok(especialidadModel, "Especialidad registrada con éxito");
-            return ResponseEntity.ok(response);
+            ResponseEntity.ok(AllEspecialidadesLink);
+            return ResponseEntity.ok(especialidadModel);
         }
     }
 
@@ -136,6 +135,10 @@ public class EspecialidadController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarEspecialidad(@PathVariable Long id) throws IllegalOperationException {
         especialidadService.eliminarEspecialidad(id);
+        EspecialidadModel especialidadModel = new EspecialidadModel();
+        Link allEspecialidadLink = linkTo(methodOn(EspecialidadController.class).listarEspecialidades("v0.2.0")).withRel("Ver todas Especialidades").expand("v0.2.0");
+        especialidadModel.add(allEspecialidadLink);
+        ResponseEntity.ok(allEspecialidadLink);
         return ResponseEntity.ok(GlobalResponse.ok("Especialidad eliminada correctamente"));
     }
 
@@ -155,7 +158,10 @@ public class EspecialidadController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Especialidad especialidadActualizada = especialidadService.modificarEspecialidad(id, especialidad);
-            return ResponseEntity.ok(GlobalResponse.ok(especialidadActualizada));
+            EspecialidadModel especialidadModel = especialidadModelAssembler.toModel(especialidadActualizada);
+            Link allEspecialidadLink = linkTo(methodOn(EspecialidadController.class).listarEspecialidades("v0.2.0")).withRel("Ver todas Especialidades").expand("v0.2.0");
+            especialidadModel.add(allEspecialidadLink);
+            return ResponseEntity.ok(allEspecialidadLink);
         }
     }
 }

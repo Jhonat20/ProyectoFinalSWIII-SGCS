@@ -18,5 +18,8 @@ public interface CitaService {
 
     Cita actualizarCita(Long id, Cita cita) throws IllegalOperationException;
 
+    List <Cita> listarCitasPorPaciente(Long id) throws IllegalOperationException;
+    List <Cita> listarCitasPorDoctor(Long id) throws IllegalOperationException;
+
 }
 

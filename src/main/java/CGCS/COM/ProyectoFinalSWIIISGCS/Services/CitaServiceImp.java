@@ -1,7 +1,10 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ public class CitaServiceImp implements CitaService {
 
     @Autowired
     private CitaRepository citaRepository; // Repositorio para acceso a datos de citas.
+    @Autowired
+    private DoctorRepository doctorRepository; // Repositorio para acceso a datos de doctores.
 
     /**
      * Lista todas las citas disponibles.
@@ -91,4 +96,25 @@ public class CitaServiceImp implements CitaService {
             throw new IllegalOperationException("No se encontró la cita con el ID proporcionado: " + id);
         }
     }
+
+    @Override
+    public List<Cita> listarCitasPorPaciente(Long id) throws IllegalOperationException {
+        return null;
+    }
+
+    @Override
+    public List<Cita> listarCitasPorDoctor(Long id) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(id);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+            List<Cita> citas = doctor.getCitas();
+            if (citas.isEmpty()) {
+                throw new IllegalOperationException("El doctor con el ID " + id + " no tiene ninguna cita");
+            }
+            return citas;
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Especialidad;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.CitaService;
@@ -46,6 +47,8 @@ public class DoctorController {
     private EspecialidadService especialidadService;
     @Autowired
     private DoctorModelAssembler doctorModelAssembler;
+    @Autowired
+    private CitaModelAssembler citaModelAssembler;
 
 
     /**
@@ -61,7 +64,9 @@ public class DoctorController {
         for (Doctor doctor : doctores) {
             DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
             Link selfLink = linkTo(methodOn(DoctorController.class).obtenerDoctor(doctor.getIdDoctor())).withSelfRel();
-            EntityModel<DoctorModel> entityModel = EntityModel.of(doctorModel, selfLink);
+            Link citasDoctorLink = linkTo(methodOn(CitaController.class).listarCitasPorDoctor(doctor.getIdDoctor())).withRel("Ver citas del Doctor");
+            doctorModel.add(selfLink, citasDoctorLink);
+            EntityModel<DoctorModel> entityModel = EntityModel.of(doctorModel);
             doctorModels.add(entityModel);
         }
 
@@ -71,6 +76,7 @@ public class DoctorController {
 
         return ResponseEntity.ok(collectionModel);
     }
+
 
 
     /**
@@ -96,28 +102,6 @@ public class DoctorController {
         }
     }
 
-    /**
-     * Obtiene un doctor específico por ID.
-     *
-     * @param id ID del doctor.
-     * @return ResponseEntity con el doctor solicitado o un mensaje de error si no se encuentra.
-     * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerDoctor(@PathVariable Long id) throws IllegalOperationException {
-        Optional<Doctor> optionalDoctor = doctorService.obtenerDoctorPorId(id);
-        if (optionalDoctor.isPresent()) {
-            Doctor doctor = optionalDoctor.get();
-            DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
-            // Añadir un enlace a la lista completa de doctores
-            Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
-            doctorModel.add(allDoctorsLink);
-            return ResponseEntity.ok(doctorModel);
-        } else {
-            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
-        }
-    }
-
 
     /**
      * Elimina un doctor por ID.
@@ -133,7 +117,7 @@ public class DoctorController {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID A eliminar"));
         }else {
             doctorService.eliminarDoctor(id);
-            Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("allDoctors");
+            Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Eliminado correctamente, Ver todos los Doctors");
             return ResponseEntity.ok(allDoctorsLink);
         }
     }
@@ -213,6 +197,33 @@ public class DoctorController {
         DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
         return ResponseEntity.ok(doctorModel);
     }
+
+
+    /**
+     * Obtiene un doctor específico por ID.
+     *
+     * @param id ID del doctor.
+     * @return ResponseEntity con el doctor solicitado o un mensaje de error si no se encuentra.
+     * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerDoctor(@PathVariable Long id) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorService.obtenerDoctorPorId(id);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+            DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
+            // Añadir un enlace a la lista completa de doctores
+            Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
+            doctorModel.add(allDoctorsLink);
+            // Añadir un enlace a la lista de citas del doctor
+            Link citasDoctorLink = linkTo(methodOn(CitaController.class).listarCitasPorDoctor(id)).withRel("Ver citas del Doctor");
+            doctorModel.add(citasDoctorLink);
+            return ResponseEntity.ok(doctorModel);
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
+        }
+    }
+
 
 
     @PutMapping("/{doctorId}/especialidades/{especialidadId}")

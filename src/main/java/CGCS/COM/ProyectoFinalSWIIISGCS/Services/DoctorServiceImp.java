@@ -146,6 +146,9 @@ public class DoctorServiceImp implements DoctorService {
     }
 
 
+
+
+
 //    //*********************************Metodo para eliminar horarios pasados**************************
 //    @PostConstruct
 //    public void eliminarHorariosPasados() {
