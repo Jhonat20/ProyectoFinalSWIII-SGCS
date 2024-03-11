@@ -2,9 +2,11 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Services;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Especialidad;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.CitaRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.DoctorRepository;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.EspecialidadRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Repositories.HorarioRepository;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import jakarta.annotation.PostConstruct;
@@ -13,9 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DoctorServiceImp implements DoctorService {
@@ -24,6 +25,9 @@ public class DoctorServiceImp implements DoctorService {
     public DoctorRepository doctorRepository;
     @Autowired
     public CitaRepository citaRepository;
+
+    @Autowired
+    public EspecialidadRepository especialidadRepository;
 
     @Autowired
     public HorarioRepository horarioRepository;
@@ -98,7 +102,48 @@ public class DoctorServiceImp implements DoctorService {
         }
     }
 
+    @Override
+    public Doctor asignarEspecialidadDoctor(Long doctorId, Long especialidadId) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
+        Optional<Especialidad> optionalEspecialidad = especialidadRepository.findById(especialidadId);
+        if (optionalDoctor.isPresent() && optionalEspecialidad.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+            Especialidad especialidad = optionalEspecialidad.get();
 
+            doctor.getEspecialidades().add(especialidad);
+            especialidad.getDoctores().add(doctor);
+
+            doctorRepository.save(doctor);
+            return doctor;
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor o la especialidad con el ID proporcionado");
+        }
+    }
+
+    @Override
+    public Doctor desasignarCitaDoctor(Long doctorId, Long citaId) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
+        if (optionalDoctor.isPresent()) {
+            Doctor doctor = optionalDoctor.get();
+
+            // Obtener la cita por su ID
+            Optional<Cita> optionalCita = citaRepository.findById(citaId);
+            if (optionalCita.isPresent()) {
+                Cita cita = optionalCita.get();
+
+                // Desasignar la cita del doctor
+                doctor.getCitas().remove(cita);
+                cita.setDoctor(null);
+
+                // Guardar el doctor actualizado en la base de datos
+                return doctorRepository.save(doctor);
+            } else {
+                throw new IllegalOperationException("No se encontró la cita con el ID proporcionado: " + citaId);
+            }
+        } else {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + doctorId);
+        }
+    }
 
 
 //    //*********************************Metodo para eliminar horarios pasados**************************

@@ -18,7 +18,7 @@ import java.util.Date;
  * anotaciones de Jackson para gestionar la serialización/deserialización JSON.
  * También se incluyen validaciones para los campos de la cita.
  */
-@Data // Lombok annotation to create all the getters, setters, equals, hash, and toString methods, based on the fields.
+@Data
 @Entity // Especifica que la clase es una entidad JPA.
 @Table(name = "citas") // Especifica la tabla en la base de datos con la que esta entidad está vinculada.
 public class Cita {
@@ -35,7 +35,6 @@ public class Cita {
     @Column(nullable = false) // Indica que la columna no puede ser nula.
     private String descripcion; // Descripción de la cita.
 
-    @NotBlank(message = "El estado de la cita es obligatorio") // Asegura que el estado no sea nulo ni esté en blanco.
     @Column(name = "estado") // Indica que la columna no puede ser nula.
     private String estado; // Estado actual de la cita (por ejemplo: "confirmado", "cancelado").
 

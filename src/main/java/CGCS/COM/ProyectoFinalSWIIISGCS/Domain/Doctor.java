@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -86,4 +87,18 @@ public class Doctor {
         citas.add(cita);
         cita.setDoctor(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Doctor)) return false;
+        Doctor doctor = (Doctor) o;
+        return Objects.equals(getIdDoctor(), doctor.getIdDoctor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdDoctor());
+    }
+
 }

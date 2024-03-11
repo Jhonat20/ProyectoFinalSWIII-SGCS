@@ -2,31 +2,26 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Especialidad;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Horario;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.CitaService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 
+import CGCS.COM.ProyectoFinalSWIIISGCS.Services.EspecialidadService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.hateoas.*;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -45,9 +40,10 @@ public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
-
     @Autowired
     private CitaService citaService;
+    @Autowired
+    private EspecialidadService especialidadService;
     @Autowired
     private DoctorModelAssembler doctorModelAssembler;
 
@@ -58,7 +54,7 @@ public class DoctorController {
      * @return ResponseEntity con una lista de doctores y encabezados apropiados.
      * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
      */
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<?> listarDoctores() throws IllegalOperationException {
         List<Doctor> doctores = doctorService.listarDoctores();
         List<EntityModel<DoctorModel>> doctorModels = new ArrayList<>();
@@ -86,7 +82,7 @@ public class DoctorController {
      * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
      */
     @PostMapping
-    public ResponseEntity<?> registrarDoctor(@Valid @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
+    public ResponseEntity<?> registrarDoctorv2(@Valid @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
             Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
@@ -167,7 +163,6 @@ public class DoctorController {
        }
     }
 
-
     @PutMapping("/{doctorId}/citas/{citaId}")
     public ResponseEntity<?> asignarCitaDoctor(@PathVariable Long doctorId, @PathVariable Long citaId) throws IllegalOperationException {
         int cantidadCitas = 20;
@@ -190,25 +185,28 @@ public class DoctorController {
         }
         intervalo = duracionHorario.dividedBy(cantidadCitas);
 
+        // Si el horario del doctor está en el pasado, devuelve un error
+        LocalDate fechaActual = LocalDate.now();
+        if (horario.getDia().isBefore(fechaActual)) {
+            return ResponseEntity.ok(GlobalResponse.error("El doctor no tiene un horario futuro"));
+        }
+
         LocalDateTime horaCita = LocalDateTime.of(horario.getDia(), horario.getHoraInicio());
 
-        // Calcula la fecha y hora de la cita basándose en el horario del doctor y el número de citas que ya tiene
-        for (int i = 0; i < cantidadCitas; i++) {
-            // Salta la hora de almuerzo
-            if (horaCita.toLocalTime().equals(LocalTime.of(13, 0))) {
-                horaCita = horaCita.plusHours(1);
-            }
-
-            // Asigna la fecha y hora a cada cita
-            Cita cita1 = new Cita();
-            cita1.setFecha(horaCita.toLocalDate());  // Usa la fecha del horario
-            cita1.setHora(horaCita.toLocalTime());
-
-            // Avanza al siguiente intervalo de tiempo
+        // Actualiza las citas existentes
+        for (Cita cita : verdoctor.getCitas()) {
+            cita.setFecha(horaCita.toLocalDate());
+            cita.setHora(horaCita.toLocalTime());
             horaCita = horaCita.plus(intervalo);
+        }
 
-            // Asigna la cita al doctor y guarda los cambios
+        // Asigna nuevas citas si es necesario
+        for (int i = verdoctor.getCitas().size(); i < cantidadCitas; i++) {
+            Cita cita1 = new Cita();
+            cita1.setFecha(horaCita.toLocalDate());
+            cita1.setHora(horaCita.toLocalTime());
             verdoctor.getCitas().add(cita1);
+            horaCita = horaCita.plus(intervalo);
         }
 
         Doctor doctor = doctorService.asignarCitaDoctor(doctorId, citaId);
@@ -216,6 +214,43 @@ public class DoctorController {
         return ResponseEntity.ok(doctorModel);
     }
 
+
+    @PutMapping("/{doctorId}/especialidades/{especialidadId}")
+    public ResponseEntity<?> asignarEspecialidadDoctor(@PathVariable Long doctorId, @PathVariable Long especialidadId) throws IllegalOperationException {
+        if (doctorId == null || especialidadId == null) {
+            throw new IllegalArgumentException("Los IDs del doctor y la especialidad no pueden ser nulos");
+
+        }
+
+        Optional<Doctor> optionalDoctor = doctorService.obtenerDoctorPorId(doctorId);
+        if (!optionalDoctor.isPresent()) {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado");
+        }
+
+        Doctor doctor = optionalDoctor.get();
+
+        Optional<Especialidad> optionalEspecialidad = especialidadService.buscarEspecialidadPorId(especialidadId);
+        if (!optionalEspecialidad.isPresent()) {
+            throw new IllegalOperationException("No se encontró la especialidad con el ID proporcionado");
+        }
+
+        Especialidad especialidad = optionalEspecialidad.get();
+
+        doctor.getEspecialidades().add(especialidad);
+        especialidad.getDoctores().add(doctor);
+
+        doctorService.actualizarDoctor(doctorId, doctor);
+        DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
+        Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
+        doctorModel.add(allDoctorsLink);
+        return ResponseEntity.ok(doctorModel);
+    }
+
+    @DeleteMapping("/{doctorId}/citas/{citaId}")
+    public ResponseEntity<?> desasignarCitaDoctor(@PathVariable Long doctorId, @PathVariable Long citaId) throws IllegalOperationException {
+        Doctor doctor = doctorService.desasignarCitaDoctor(doctorId, citaId);
+        return ResponseEntity.ok(doctor);
+    }
 
 
 }

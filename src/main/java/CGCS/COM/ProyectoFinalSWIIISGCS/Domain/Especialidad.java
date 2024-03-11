@@ -1,10 +1,13 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -35,6 +38,21 @@ public class Especialidad {
 
     /** Conjunto de médicos que tienen esta especialidad */
     @ManyToMany(mappedBy = "especialidades")
+    @JsonIgnore
     private Set<Doctor> doctores;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Especialidad)) return false;
+        Especialidad especialidad = (Especialidad) o;
+        return Objects.equals(getIdEspecialidad(), especialidad.getIdEspecialidad());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdEspecialidad());
+    }
 
 }
