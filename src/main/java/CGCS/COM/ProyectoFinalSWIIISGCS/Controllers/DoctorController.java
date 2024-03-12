@@ -70,14 +70,10 @@ public class DoctorController {
             doctorModels.add(entityModel);
         }
 
-        CollectionModel<EntityModel<DoctorModel>> collectionModel = CollectionModel.of(doctorModels);
-        Link link = linkTo(methodOn(DoctorController.class).listarDoctores()).withSelfRel();
-        collectionModel.add(link);
-
+        Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withSelfRel();
+        CollectionModel<EntityModel<DoctorModel>> collectionModel = CollectionModel.of(doctorModels, allDoctorsLink);
         return ResponseEntity.ok(collectionModel);
     }
-
-
 
     /**
      * Registra un nuevo doctor.
@@ -88,19 +84,19 @@ public class DoctorController {
      * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
      */
     @PostMapping
-    public ResponseEntity<?> registrarDoctorv2(@Valid @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
+    public ResponseEntity<?> registrarDoctor(@Valid @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
             Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Doctor nuevoDoctor = doctorService.registrarDoctor(doctor);
             DoctorModel doctorModel = doctorModelAssembler.toModel(nuevoDoctor);
-            // Añadir un enlace a la lista completa de doctores
             Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
             doctorModel.add(allDoctorsLink);
             return ResponseEntity.ok(doctorModel);
         }
     }
+
 
 
     /**
@@ -131,21 +127,23 @@ public class DoctorController {
      * @throws IllegalOperationException Si ocurre una operación ilegal durante la solicitud.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarDoctor(@PathVariable Long id, @RequestBody Doctor doctor, BindingResult bindingResult) throws IllegalOperationException {
-       Optional <Doctor> doctorOptional = doctorService.obtenerDoctorPorId(id);
-       if (!doctorOptional.isPresent()){
-           if (bindingResult.hasErrors()) {
-                Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
-           }else {
-                Doctor doctorActualizado = doctorService.actualizarDoctor(id, doctor);
-                DoctorModel doctorModel = doctorModelAssembler.toModel(doctorActualizado);
-                 return ResponseEntity.ok(doctorModel);
-           }
-       }else {
-           return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
-       }
+    public ResponseEntity<?> actualizarDoctor(@PathVariable Long id, @RequestBody @Valid Doctor doctor, BindingResult bindingResult) throws IllegalOperationException{
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errores = ValidationUtil.getValidationErrors(bindingResult);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+        }
+        Optional<Doctor> doctorOptional = doctorService.obtenerDoctorPorId(id);
+        if (!doctorOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró el doctor con el ID proporcionado");
+        }
+        Doctor doctorActualizado = doctorService.actualizarDoctor(id, doctor);
+        DoctorModel doctorModel = doctorModelAssembler.toModel(doctorActualizado);
+        Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
+        doctorModel.add(allDoctorsLink);
+        return ResponseEntity.ok(doctorModel);
     }
+
+
 
     @PutMapping("/{doctorId}/citas/{citaId}")
     public ResponseEntity<?> asignarCitaDoctor(@PathVariable Long doctorId, @PathVariable Long citaId) throws IllegalOperationException {
@@ -195,6 +193,8 @@ public class DoctorController {
 
         Doctor doctor = doctorService.asignarCitaDoctor(doctorId, citaId);
         DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
+        Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
+        doctorModel.add(allDoctorsLink);
         return ResponseEntity.ok(doctorModel);
     }
 
@@ -212,10 +212,8 @@ public class DoctorController {
         if (optionalDoctor.isPresent()) {
             Doctor doctor = optionalDoctor.get();
             DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
-            // Añadir un enlace a la lista completa de doctores
             Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
             doctorModel.add(allDoctorsLink);
-            // Añadir un enlace a la lista de citas del doctor
             Link citasDoctorLink = linkTo(methodOn(CitaController.class).listarCitasPorDoctor(id)).withRel("Ver citas del Doctor");
             doctorModel.add(citasDoctorLink);
             return ResponseEntity.ok(doctorModel);

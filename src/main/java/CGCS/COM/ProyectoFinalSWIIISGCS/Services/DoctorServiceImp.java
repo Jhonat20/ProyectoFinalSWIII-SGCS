@@ -64,12 +64,16 @@ public class DoctorServiceImp implements DoctorService {
             Doctor doctorExistente = optionalDoctor.get();
             doctorExistente.setNombres(doctor.getNombres());
             doctorExistente.setApellidos(doctor.getApellidos());
-            // Actualiza otros campos según sea necesario
+            doctorExistente.setDni(doctor.getDni());
+            doctorExistente.setTelefono(doctor.getTelefono());
+            doctorExistente.setEmail(doctor.getEmail());
             return doctorRepository.save(doctorExistente);
         } else {
             throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado: " + id);
         }
     }
+
+
 
     @Override
     public Doctor asignarCitaDoctor(Long doctorId, Long citaId) throws IllegalOperationException {
@@ -104,20 +108,29 @@ public class DoctorServiceImp implements DoctorService {
 
     @Override
     public Doctor asignarEspecialidadDoctor(Long doctorId, Long especialidadId) throws IllegalOperationException {
+        if (doctorId == null || especialidadId == null) {
+            throw new IllegalArgumentException("Los IDs del doctor y la especialidad no pueden ser nulos");
+        }
+
         Optional<Doctor> optionalDoctor = doctorRepository.findById(doctorId);
         Optional<Especialidad> optionalEspecialidad = especialidadRepository.findById(especialidadId);
-        if (optionalDoctor.isPresent() && optionalEspecialidad.isPresent()) {
-            Doctor doctor = optionalDoctor.get();
-            Especialidad especialidad = optionalEspecialidad.get();
 
-            doctor.getEspecialidades().add(especialidad);
-            especialidad.getDoctores().add(doctor);
-
-            doctorRepository.save(doctor);
-            return doctor;
-        } else {
-            throw new IllegalOperationException("No se encontró el doctor o la especialidad con el ID proporcionado");
+        if (!optionalDoctor.isPresent() && !optionalEspecialidad.isPresent()) {
+            throw new IllegalOperationException("No se proporcionaron IDs válidos para el doctor y la especialidad");
+        } else if (!optionalDoctor.isPresent()) {
+            throw new IllegalOperationException("No se encontró el doctor con el ID proporcionado");
+        } else if (!optionalEspecialidad.isPresent()) {
+            throw new IllegalOperationException("No se encontró la especialidad con el ID proporcionado");
         }
+
+        Doctor doctor = optionalDoctor.get();
+        Especialidad especialidad = optionalEspecialidad.get();
+
+        doctor.getEspecialidades().add(especialidad);
+        especialidad.getDoctores().add(doctor);
+
+        doctorRepository.save(doctor);
+        return doctor;
     }
 
     @Override

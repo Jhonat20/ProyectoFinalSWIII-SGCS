@@ -5,6 +5,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.CitaService;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
@@ -77,7 +78,7 @@ public class CitaController {
                 CitaModel citaModel = citaModelAssembler.toModel(cita);
                 Link citaLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withRel("Ver Cita");
                 citaModel.add(citaLink);
-                Link doctorLink = linkTo(methodOn(DoctorController.class).obtenerDoctor(doctorId)).withRel("Ver Doctor");
+                Link doctorLink = linkTo(methodOn(DoctorService.class).obtenerDoctorPorId(doctorId)).withRel("Ver Doctor");
                 citaModel.add(doctorLink);
                 citaModels.add(citaModel);
             }
