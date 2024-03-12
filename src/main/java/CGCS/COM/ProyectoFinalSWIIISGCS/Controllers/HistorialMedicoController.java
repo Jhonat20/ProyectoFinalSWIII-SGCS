@@ -124,6 +124,8 @@ public class HistorialMedicoController {
             } else {
                 HistorialMedico historialMedicoActualizado = historialMedicoService.Actualizar(id, historialMedico);
                 HistorialMedicoModel historialMedicoModel = historialMedicoAssembler.toModel(historialMedicoActualizado);
+                Link selfLink = linkTo(methodOn(HistorialMedicoController.class).obtenerHistorialMedico(id)).withSelfRel();
+                historialMedicoModel.add(selfLink);
                 return ResponseEntity.ok(historialMedicoModel);
             }
         } else {

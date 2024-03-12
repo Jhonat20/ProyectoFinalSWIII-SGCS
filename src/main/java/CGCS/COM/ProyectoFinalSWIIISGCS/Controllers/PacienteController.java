@@ -1,93 +1,58 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Paciente.PacienteModel;
+import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Paciente.PacienteModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.PacienteService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-/**
- * Controlador REST para gestionar operaciones relacionadas con pacientes.
- * Maneja la creación, consulta, actualización y eliminación de registros de pacientes.
- */
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("api/v1/Paciente")
 public class PacienteController {
 
     @Autowired
-    private PacienteService pacienteService; // Servicio para operaciones relacionadas con pacientes.
+    private PacienteService pacienteService;
 
-    /**
-     * Lista todos los pacientes registrados.
-     * @param apiVersion La versión de la API especificada en el encabezado de la solicitud.
-     * @return Una lista de pacientes junto con la versión de la API usada.
-     */
+    @Autowired
+    private PacienteModelAssembler pacienteModelAssembler;
+
     @GetMapping
-    public ResponseEntity<?> listarPacientes(@RequestHeader(value = "API-Version", defaultValue = "v0.1.0") String apiVersion) throws IllegalOperationException {
-        if (!esVersionCompatible(apiVersion)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(GlobalResponse.error("La versión de la API no es compatible."));
-        }
-
+    public ResponseEntity<?> listarPacientes() throws IllegalOperationException {
         List<Paciente> pacientes = pacienteService.listarPacientes();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("API-Version", apiVersion);
-        return ResponseEntity.ok().headers(headers).body(GlobalResponse.ok(pacientes));
-    }
-
-    private boolean esVersionCompatible(String apiVersion) {
-        // Versión actual de la API
-        String versionActual = "v0.1.0";
-
-        // Eliminar el prefijo "v" y dividir la versión en sus componentes
-        String[] partesVersionActual = versionActual.substring(1).split("\\.");
-        String[] partesVersionSolicitada = apiVersion.substring(1).split("\\.");
-
-        // Convertir los componentes de la versión en números enteros
-        int majorActual = Integer.parseInt(partesVersionActual[0]);
-        int minorActual = Integer.parseInt(partesVersionActual[1]);
-        int patchActual = Integer.parseInt(partesVersionActual[2]);
-
-        int majorSolicitada = Integer.parseInt(partesVersionSolicitada[0]);
-        int minorSolicitada = Integer.parseInt(partesVersionSolicitada[1]);
-        int patchSolicitada = Integer.parseInt(partesVersionSolicitada[2]);
-
-        // Comparar los componentes de la versión
-        if (majorActual > majorSolicitada) {
-            return false;  // La versión actual es mayor que la solicitada
-        } else if (majorActual < majorSolicitada) {
-            return true;  // La versión actual es menor que la solicitada
-        } else {
-            // Si las partes principales son iguales, comparar partes menores
-            if (minorActual > minorSolicitada) {
-                return false;  // La versión actual es mayor que la solicitada
-            } else if (minorActual < minorSolicitada) {
-                return true;  // La versión actual es menor que la solicitada
-            } else {
-                // Si las partes principales y menores son iguales, comparar partes de revisión
-                return patchActual >= patchSolicitada;  // Si la versión actual es mayor o igual que la solicitada
-            }
+        List<EntityModel<PacienteModel>> pacienteModels = new ArrayList<>();
+        for (Paciente paciente : pacientes) {
+            PacienteModel pacienteModel = pacienteModelAssembler.toModel(paciente);
+            Link selfLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(paciente.getIdPaciente())).withSelfRel();
+            pacienteModel.add(selfLink);
+            EntityModel<PacienteModel> entityModel = EntityModel.of(pacienteModel);
+            pacienteModels.add(entityModel);
         }
+        Link allPacientesLink = linkTo(methodOn(PacienteController.class).listarPacientes()).withSelfRel();
+        CollectionModel<EntityModel<PacienteModel>> collectionModel = CollectionModel.of(pacienteModels, allPacientesLink);
+        return ResponseEntity.ok(collectionModel);
+
     }
 
-    /**
-     * Registra un nuevo paciente verificando la validez de los datos proporcionados.
-     * @param paciente El paciente a registrar.
-     * @param bindingResult Resultado de la validación del objeto paciente.
-     * @return El paciente registrado o errores de validación si los hubiera.
-     */
     @PostMapping
     public ResponseEntity<?> registrarPaciente(@Valid @RequestBody Paciente paciente, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
@@ -95,43 +60,43 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Paciente nuevoPaciente = pacienteService.registrarPaciente(paciente);
-            return ResponseEntity.ok(GlobalResponse.ok(nuevoPaciente));
+            PacienteModel pacienteModel = pacienteModelAssembler.toModel(nuevoPaciente);
+            Link selfLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(nuevoPaciente.getIdPaciente())).withSelfRel();
+            pacienteModel.add(selfLink);
+            Link allPacientesLink = linkTo(methodOn(PacienteController.class).listarPacientes()).withRel("Ver lista Pacientes");
+            pacienteModel.add(allPacientesLink);
+            return ResponseEntity.ok(pacienteModel);
         }
     }
 
-    /**
-     * Obtiene los detalles de un paciente específico por su ID.
-     * @param id El ID del paciente a consultar.
-     * @return Los detalles del paciente o un mensaje de error si no se encuentra.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPaciente(@PathVariable Long id) throws IllegalOperationException {
         Optional<Paciente> optionalPaciente = pacienteService.obtenerPacientePorId(id);
         if (optionalPaciente.isPresent()) {
-            return ResponseEntity.ok(GlobalResponse.ok(optionalPaciente.get()));
+            PacienteModel pacienteModel = pacienteModelAssembler.toModel(optionalPaciente.get());
+            Link selfLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(id)).withSelfRel();
+            pacienteModel.add(selfLink);
+            return ResponseEntity.ok(pacienteModel);
         } else {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró el paciente con el ID proporcionado"));
         }
     }
 
-    /**
-     * Elimina un paciente por su ID.
-     * @param id El ID del paciente a eliminar.
-     * @return Mensaje de confirmación de la eliminación.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarPaciente(@PathVariable Long id) throws IllegalOperationException {
-        pacienteService.eliminarPaciente(id);
-        return ResponseEntity.ok(GlobalResponse.ok("Paciente eliminado correctamente"));
-    }
+        Optional<Paciente> optionalPaciente = pacienteService.obtenerPacientePorId(id);
+        if (optionalPaciente.isPresent()) {
+            pacienteService.eliminarPaciente(id);
+            return ResponseEntity.ok(GlobalResponse.ok("Paciente eliminado correctamente"));
+        } else {
+            PacienteModel pacienteModel = pacienteModelAssembler.toModel(optionalPaciente.get());
+            Link allPacientesLink = linkTo(methodOn(PacienteController.class).listarPacientes()).withRel("Ver lista Pacientes");
+            pacienteModel.add(allPacientesLink);
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el paciente con el ID proporcionado"));
 
-    /**
-     * Actualiza los datos de un paciente existente.
-     * @param id El ID del paciente a actualizar.
-     * @param paciente Los nuevos datos del paciente.
-     * @param bindingResult Resultado de la validación de los datos del paciente.
-     * @return El paciente actualizado o errores de validación si los hubiera.
-     */
+        }
+         }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPaciente(@PathVariable Long id, @Valid @RequestBody Paciente paciente, BindingResult bindingResult) throws IllegalOperationException {
         if (bindingResult.hasErrors()) {
@@ -139,19 +104,10 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
         } else {
             Paciente pacienteActualizado = pacienteService.actualizarPaciente(id, paciente);
-            return ResponseEntity.ok(GlobalResponse.ok(pacienteActualizado));
-        }
-    }
-
-    @PostMapping("/{idPaciente}/citas/{idCita}")
-    public ResponseEntity<?> agregarCitaAPaciente(@PathVariable Long idPaciente, @PathVariable Long idCita) {
-        try {
-            pacienteService.agregarCitaAPaciente(idPaciente, idCita);
-            return ResponseEntity.ok().body(Map.of("status", "ok", "message", "cita agregada exitosamente al Paciente."));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.ok().body(Map.of("status", "error", "message", "Ha ocurrido un error al agregar la cita"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al agregar la cita al paciente.");
+            PacienteModel pacienteModel = pacienteModelAssembler.toModel(pacienteActualizado);
+            Link selfLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(id)).withSelfRel();
+            pacienteModel.add(selfLink);
+            return ResponseEntity.ok(pacienteModel);
         }
     }
 }

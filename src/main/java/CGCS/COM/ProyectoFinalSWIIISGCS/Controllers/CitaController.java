@@ -5,6 +5,7 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.CitaService;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Services.DoctorService;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Validation.ValidationUtil;
 import CGCS.COM.ProyectoFinalSWIIISGCS.exception.IllegalOperationException;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -64,6 +66,29 @@ public class CitaController {
         return ResponseEntity.ok(collectionModel);
         }
     }
+
+    @GetMapping("/{doctorId}/citas")
+    public ResponseEntity<?> listarCitasPorDoctor(@PathVariable Long doctorId) throws IllegalOperationException{
+        List<Cita> citas = citaService.listarCitasPorDoctor(doctorId);
+        if (citas == null) {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
+        } else {
+            List<CitaModel> citaModels = new ArrayList<>();
+            for (Cita cita : citas) {
+                CitaModel citaModel = citaModelAssembler.toModel(cita);
+                Link citaLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withRel("Ver Cita");
+                citaModel.add(citaLink);
+                Link doctorLink = linkTo(methodOn(DoctorService.class).obtenerDoctorPorId(doctorId)).withRel("Ver Doctor");
+                citaModel.add(doctorLink);
+                citaModels.add(citaModel);
+            }
+
+            return ResponseEntity.ok(citaModels);
+        }
+    }
+
+
+
 
     /**
      * Registra una nueva cita, validando previamente los datos de entrada.
