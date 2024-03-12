@@ -18,8 +18,8 @@ public interface PacienteService {
 
     Paciente actualizarPaciente(Long id, Paciente paciente) throws IllegalOperationException;
 
-    void agregarCitaAPaciente(long idPaciente, long idCita);
+    void agregarCitaAPaciente(long idPaciente, long idCita)throws IllegalOperationException;
 
-    void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico) ;
+    void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico) throws IllegalOperationException;
 
 }

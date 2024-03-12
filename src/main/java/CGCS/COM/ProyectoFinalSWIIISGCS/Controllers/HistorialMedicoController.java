@@ -1,6 +1,7 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.HistorialMedico;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.HistorialMedico.HistorialMedicoAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.HistorialMedico.HistorialMedicoModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.Services.HistorialMedicoService;
@@ -53,14 +54,19 @@ public class HistorialMedicoController {
             HistorialMedicoModel historialMedicoModel = historialMedicoAssembler.toModel(historialMedico);
             Link Selflink = linkTo(methodOn(HistorialMedicoController.class).obtenerHistorialMedico(historialMedico.getIdHistorialMedico())).withSelfRel();
             EntityModel<HistorialMedicoModel> entityModel = EntityModel.of(historialMedicoModel, Selflink);
+            if (historialMedico.getPaciente() != null) {
+                Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(historialMedico.getPaciente().getIdPaciente())).withRel("Ver paciente");
+                entityModel.add(pacienteLink);
+            }
+
             historialMedicoModels.add(entityModel);
         }
         CollectionModel<EntityModel<HistorialMedicoModel>> collectionModel = CollectionModel.of(historialMedicoModels);
         Link link = linkTo(methodOn(HistorialMedicoController.class).listarHistorialMedico()).withSelfRel();
         collectionModel.add(link);
-
         return ResponseEntity.ok(collectionModel);
     }
+
 
     /**
      * Obtiene un historial médico por su ID.
@@ -75,13 +81,18 @@ public class HistorialMedicoController {
         if (optionalHistorialMedico.isPresent()) {
             HistorialMedico historialMedico = optionalHistorialMedico.get();
             HistorialMedicoModel historialMedicoModel = historialMedicoAssembler.toModel(historialMedico);
+            if (historialMedico.getPaciente() != null && historialMedico.getPaciente().getIdPaciente() != null) {
+                Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(historialMedico.getPaciente().getIdPaciente())).withRel("Ver paciente");
+                historialMedicoModel.add(pacienteLink);
+            }
             Link allHistorialMedicoLink = linkTo(methodOn(HistorialMedicoController.class).listarHistorialMedico()).withRel("Ver lista HistorialMedico");
             historialMedicoModel.add(allHistorialMedicoLink);
-            return ResponseEntity.ok(historialMedico);
+            return ResponseEntity.ok(historialMedicoModel);
         } else {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
+
 
     /**
      * Guarda un nuevo historial médico.
@@ -126,12 +137,18 @@ public class HistorialMedicoController {
                 HistorialMedicoModel historialMedicoModel = historialMedicoAssembler.toModel(historialMedicoActualizado);
                 Link selfLink = linkTo(methodOn(HistorialMedicoController.class).obtenerHistorialMedico(id)).withSelfRel();
                 historialMedicoModel.add(selfLink);
+                Paciente paciente = historialMedicoActualizado.getPaciente();
+                if (paciente != null) {
+                    Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(paciente.getIdPaciente())).withRel("Ver paciente");
+                    historialMedicoModel.add(pacienteLink);
+                }
                 return ResponseEntity.ok(historialMedicoModel);
             }
         } else {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró el historial médico con el ID proporcionado"));
         }
     }
+
 
     /**
      * Actualiza parcialmente un historial médico existente.

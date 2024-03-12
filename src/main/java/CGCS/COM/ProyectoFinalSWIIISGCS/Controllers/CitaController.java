@@ -1,6 +1,7 @@
 package CGCS.COM.ProyectoFinalSWIIISGCS.Controllers;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Cita;
+import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModel;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita.CitaModelAssembler;
 import CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Doctor.DoctorModel;
@@ -41,6 +42,9 @@ public class CitaController {
     @Autowired
     private CitaModelAssembler citaModelAssembler;
 
+    @Autowired
+    private DoctorService doctorService;
+
     /**
      * Lista todas las citas disponibles.
      *
@@ -51,39 +55,56 @@ public class CitaController {
     public ResponseEntity<?> listarCitas() throws IllegalOperationException {
         List<Cita> citas = citaService.listarCitas();
         List<EntityModel<CitaModel>> citaModels = new ArrayList<>();
-        if(citas.isEmpty()){
+
+        if (citas.isEmpty()) {
             return ResponseEntity.ok(GlobalResponse.error("No hay citas registradas"));
-        }else{
-        for (Cita cita : citas) {
-            CitaModel citaModel = citaModelAssembler.toModel(cita);
-            Link selfLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withSelfRel();
-            EntityModel<CitaModel> entityModel = EntityModel.of(citaModel, selfLink);
-            citaModels.add(entityModel);
-        }
-        CollectionModel<EntityModel<CitaModel>> collectionModel = CollectionModel.of(citaModels);
-        Link link = linkTo(methodOn(CitaController.class).listarCitas()).withSelfRel();
-        collectionModel.add(link);
-        return ResponseEntity.ok(collectionModel);
+        } else {
+            for (Cita cita : citas) {
+                CitaModel citaModel = citaModelAssembler.toModel(cita);
+                Link selfLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withSelfRel();
+                citaModel.add(selfLink);
+                if (cita.getPaciente() != null) {
+                    Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(cita.getPaciente().getIdPaciente())).withRel("Ver Paciente");
+                    citaModel.add(pacienteLink);
+                }
+                if (cita.getDoctor() != null) {
+                    Link doctorLink = linkTo(methodOn(DoctorController.class).obtenerDoctor(cita.getDoctor().getIdDoctor())).withRel("Ver Doctor");
+                    citaModel.add(doctorLink);
+                }
+                EntityModel<CitaModel> entityModel = EntityModel.of(citaModel);
+                citaModels.add(entityModel);
+            }
+            CollectionModel<EntityModel<CitaModel>> collectionModel = CollectionModel.of(citaModels);
+            Link link = linkTo(methodOn(CitaController.class).listarCitas()).withSelfRel();
+            collectionModel.add(link);
+            return ResponseEntity.ok(collectionModel);
         }
     }
 
+
     @GetMapping("/{doctorId}/citas")
-    public ResponseEntity<?> listarCitasPorDoctor(@PathVariable Long doctorId) throws IllegalOperationException{
-        List<Cita> citas = citaService.listarCitasPorDoctor(doctorId);
-        if (citas == null) {
-            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
-        } else {
+    public ResponseEntity<?> listarCitasPorDoctor(@PathVariable Long doctorId) throws IllegalOperationException {
+        Optional<Doctor> optionalDoctor = doctorService.obtenerDoctorPorId(doctorId);
+        if (optionalDoctor.isPresent()) {
+            List<Cita> citas = citaService.listarCitasPorDoctor(doctorId);
             List<CitaModel> citaModels = new ArrayList<>();
             for (Cita cita : citas) {
                 CitaModel citaModel = citaModelAssembler.toModel(cita);
                 Link citaLink = linkTo(methodOn(CitaController.class).obtenerCita(cita.getIdCita())).withRel("Ver Cita");
                 citaModel.add(citaLink);
-                Link doctorLink = linkTo(methodOn(DoctorService.class).obtenerDoctorPorId(doctorId)).withRel("Ver Doctor");
-                citaModel.add(doctorLink);
+                if (optionalDoctor.isPresent()) {
+                    Link doctorLink = linkTo(methodOn(DoctorController.class).obtenerDoctor(doctorId)).withRel("Ver Doctor");
+                    citaModel.add(doctorLink);
+                }
+                if (cita.getPaciente() != null) {
+                    Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(cita.getPaciente().getIdPaciente())).withRel("Ver Paciente");
+                    citaModel.add(pacienteLink);
+                }
                 citaModels.add(citaModel);
             }
-
             return ResponseEntity.ok(citaModels);
+        } else {
+            return ResponseEntity.ok(GlobalResponse.error("No se encontró el doctor con el ID proporcionado"));
         }
     }
 
@@ -125,6 +146,14 @@ public class CitaController {
         if (optionalCita.isPresent()) {
             Cita cita = optionalCita.get();
             CitaModel citaModel = citaModelAssembler.toModel(cita);
+            if (cita.getPaciente() != null) {
+                Link pacienteLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(cita.getPaciente().getIdPaciente())).withRel("Ver Paciente");
+                citaModel.add(pacienteLink);
+            }
+            if (cita.getDoctor() != null) {
+                Link doctorLink = linkTo(methodOn(DoctorService.class).obtenerDoctorPorId(cita.getDoctor().getIdDoctor())).withRel("Ver Doctor");
+                citaModel.add(doctorLink);
+            }
             Link AllCitasLink = linkTo(methodOn(CitaController.class).listarCitas()).withRel("Ver lista Citas");
             citaModel.add(AllCitasLink);
             return ResponseEntity.ok(citaModel);
@@ -133,6 +162,7 @@ public class CitaController {
             return ResponseEntity.ok(GlobalResponse.error("No se encontró la cita con el ID proporcionado"));
         }
     }
+
 
     /**
      * Elimina una cita por su ID.

@@ -9,11 +9,9 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,5 +48,30 @@ public class EspecialidadRest {
         ApiResponse<EspecialidadDTO> response = new ApiResponse<>(true, "Especialidad obtenida con éxito", especialidadDTO);
         return ResponseEntity.ok(response);
     }
+    @PostMapping
+    public ResponseEntity<?> guardarEspecialidad(@RequestBody EspecialidadDTO especialidadDTO) throws IllegalOperationException {
+        Especialidad especialidad = modelMapper.map(especialidadDTO, Especialidad.class);
+        especialidadService.registrarEspecialidad(especialidad);
 
+        EspecialidadDTO savedEspecialidadDTO = modelMapper.map(especialidad, EspecialidadDTO.class);
+        ApiResponse<EspecialidadDTO> response = new ApiResponse<>(true, "Especialidad guardada con éxito", savedEspecialidadDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<EspecialidadDTO>> actualizarEspecialidad(@PathVariable Long id, @RequestBody EspecialidadDTO especialidadDTO) throws IllegalOperationException {
+        Especialidad especialidad = modelMapper.map(especialidadDTO, Especialidad.class);
+        especialidadService.modificarEspecialidad(id, especialidad);
+
+        EspecialidadDTO updatedEspecialidadDTO = modelMapper.map(especialidad, EspecialidadDTO.class);
+        ApiResponse<EspecialidadDTO> response = new ApiResponse<>(true, "Especialidad actualizada con éxito", updatedEspecialidadDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarEspecialidad(@PathVariable Long id) throws IllegalOperationException {
+        especialidadService.eliminarEspecialidad(id);
+        ApiResponse<String> response = new ApiResponse<>(true, "Especialidad eliminada con éxito", null);
+        return ResponseEntity.ok(response);
+    }
 }
