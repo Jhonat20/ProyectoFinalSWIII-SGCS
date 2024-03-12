@@ -75,6 +75,8 @@ public class PacienteController {
         if (optionalPaciente.isPresent()) {
             PacienteModel pacienteModel = pacienteModelAssembler.toModel(optionalPaciente.get());
             Link selfLink = linkTo(methodOn(PacienteController.class).obtenerPaciente(id)).withSelfRel();
+            Link allPacientesLink = linkTo(methodOn(PacienteController.class).listarPacientes()).withRel("Ver lista Pacientes");
+            pacienteModel.add(allPacientesLink);
             pacienteModel.add(selfLink);
             return ResponseEntity.ok(pacienteModel);
         } else {
@@ -110,4 +112,23 @@ public class PacienteController {
             return ResponseEntity.ok(pacienteModel);
         }
     }
+
+
+
+
+
+    @PutMapping("/{idPaciente}/agregarCita/{idCita}")
+    public ResponseEntity<?> agregarCitaAPaciente(@PathVariable Long idPaciente, @PathVariable Long idCita) throws IllegalOperationException {
+        pacienteService.agregarCitaAPaciente(idPaciente, idCita);
+        return ResponseEntity.ok(GlobalResponse.ok("Cita agregada al paciente correctamente"));
+    }
+
+    //agregarHistorialMedicoAPaciente
+    @PutMapping("/{idPaciente}/agregarHistorialMedico/{idHistorialMedico}")
+    public ResponseEntity<?> agregarHistorialMedicoAPaciente(@PathVariable Long idPaciente, @PathVariable Long idHistorialMedico) throws IllegalOperationException {
+        pacienteService.agregarHistorialMedicoAPaciente(idPaciente, idHistorialMedico);
+        return ResponseEntity.ok(GlobalResponse.ok("Historial médico agregado al paciente correctamente"));
+    }
+
+
 }

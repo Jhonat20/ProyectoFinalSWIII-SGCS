@@ -143,8 +143,6 @@ public class DoctorController {
         return ResponseEntity.ok(doctorModel);
     }
 
-
-
     @PutMapping("/{doctorId}/citas/{citaId}")
     public ResponseEntity<?> asignarCitaDoctor(@PathVariable Long doctorId, @PathVariable Long citaId) throws IllegalOperationException {
         int cantidadCitas = 20;
@@ -194,10 +192,11 @@ public class DoctorController {
         Doctor doctor = doctorService.asignarCitaDoctor(doctorId, citaId);
         DoctorModel doctorModel = doctorModelAssembler.toModel(doctor);
         Link allDoctorsLink = linkTo(methodOn(DoctorController.class).listarDoctores()).withRel("Ver lista Doctores");
+        Link citasDoctorLink = linkTo(methodOn(CitaController.class).listarCitasPorDoctor(doctorId)).withRel("Ver citas del Doctor");
+        doctorModel.add(citasDoctorLink);
         doctorModel.add(allDoctorsLink);
         return ResponseEntity.ok(doctorModel);
     }
-
 
     /**
      * Obtiene un doctor específico por ID.

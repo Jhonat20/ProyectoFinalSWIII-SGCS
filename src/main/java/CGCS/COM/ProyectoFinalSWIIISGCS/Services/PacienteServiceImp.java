@@ -93,7 +93,6 @@ public class PacienteServiceImp implements PacienteService {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(id);
         if (optionalPaciente.isPresent()) {
             Paciente pacienteExistente = optionalPaciente.get();
-            // Actualiza los datos del paciente con la información proporcionada.
             pacienteExistente.setNombre(paciente.getNombre());
             pacienteExistente.setApellido(paciente.getApellido());
             pacienteExistente.setDni(paciente.getDni());
@@ -107,37 +106,33 @@ public class PacienteServiceImp implements PacienteService {
             throw new IllegalOperationException("No se encontró el paciente con el ID proporcionado: " + id);
         }
     }
-
     @Override
-    public void agregarCitaAPaciente(long idPaciente, long idCita) {
+    public void agregarCitaAPaciente(long idPaciente, long idCita) throws IllegalOperationException {
         Optional<Paciente> pacienteOptional = pacienteRepository.findById(idPaciente);
         Optional<Cita> citaOptional = citaRepository.findById(idCita);
         if (pacienteOptional.isPresent() && citaOptional.isPresent()) {
             Paciente paciente = pacienteOptional.get();
-           Cita cita = citaOptional.get();
+            Cita cita = citaOptional.get();
             cita.setPaciente(paciente);
             citaRepository.save(cita);
         } else {
-            throw new NoSuchElementException("La cita o paciente  no existen");
+            throw new IllegalOperationException("La cita o paciente no existen");
         }
     }
 
-    public void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico){
+    public void agregarHistorialMedicoAPaciente(long idPaciente, long idHistorialMedico) throws IllegalOperationException {
         Optional<Paciente> pacienteOptional = pacienteRepository.findById(idPaciente);
         Optional<HistorialMedico> historialMedicoOptional = historialMedicoRepository.findById(idHistorialMedico);
 
         if (pacienteOptional.isPresent() && historialMedicoOptional.isPresent()) {
             Paciente paciente = pacienteOptional.get();
             HistorialMedico historialMedico = historialMedicoOptional.get();
-
-            // Establecer la relación entre el paciente y el historial médico
             paciente.setHistorialMedico(historialMedico);
             historialMedico.setPaciente(paciente);
-
-            // Guardar los cambios en la base de datos
             pacienteRepository.save(paciente);
         } else {
-            throw new NoSuchElementException("El paciente o historial médico no existen");
+            throw new IllegalOperationException("El paciente o historial médico no existen");
         }
     }
+
 }
