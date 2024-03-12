@@ -9,11 +9,9 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,5 +48,30 @@ public class CitaRest {
         ApiResponse<CitaDTO> response = new ApiResponse<>(true, "Cita obtenida con éxito", citaDTO);
         return ResponseEntity.ok(response);
     }
+    @PostMapping
+    public ResponseEntity<?> guardarCita(@RequestBody CitaDTO citaDTO) throws IllegalOperationException {
+        Cita cita = modelMapper.map(citaDTO, Cita.class);
+        citaService.registrarCita(cita);
 
+        CitaDTO savedCitaDTO = modelMapper.map(cita, CitaDTO.class);
+        ApiResponse<CitaDTO> response = new ApiResponse<>(true, "Cita guardada con éxito", savedCitaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CitaDTO>> actualizarCita(@PathVariable Long id, @RequestBody CitaDTO citaDTO) throws IllegalOperationException {
+        Cita cita = modelMapper.map(citaDTO, Cita.class);
+        citaService.actualizarCita(id, cita);
+
+        CitaDTO updatedCitaDTO = modelMapper.map(cita, CitaDTO.class);
+        ApiResponse<CitaDTO> response = new ApiResponse<>(true, "Cita actualizada con éxito", updatedCitaDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarCita(@PathVariable Long id) throws IllegalOperationException {
+        citaService.eliminarCita(id);
+        ApiResponse<String> response = new ApiResponse<>(true, "Cita eliminada con éxito", null);
+        return ResponseEntity.ok(response);
+    }
 }

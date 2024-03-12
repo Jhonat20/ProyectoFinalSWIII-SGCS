@@ -50,5 +50,31 @@ public class DoctorRest {
         ApiResponse<DoctorDTO> response = new ApiResponse<>(true, "Doctor obtenido con éxito", doctorDTO);
         return ResponseEntity.ok(response);
     }
+    @PostMapping
+    public ResponseEntity<?> guardarDoctor(@RequestBody DoctorDTO doctorDTO) throws IllegalOperationException {
+        Doctor doctor = modelMapper.map(doctorDTO, Doctor.class);
+        doctorService.registrarDoctor(doctor);
+
+        DoctorDTO savedDoctorDTO = modelMapper.map(doctor, DoctorDTO.class);
+        ApiResponse<DoctorDTO> response = new ApiResponse<>(true, "Doctor guardado con éxito", savedDoctorDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<DoctorDTO>> actualizarDoctor(@PathVariable Long id, @RequestBody DoctorDTO doctorDTO) throws IllegalOperationException {
+        Doctor doctor = modelMapper.map(doctorDTO, Doctor.class);
+        doctorService.actualizarDoctor(id, doctor);
+
+        DoctorDTO updatedDoctorDTO = modelMapper.map(doctor, DoctorDTO.class);
+        ApiResponse<DoctorDTO> response = new ApiResponse<>(true, "Doctor actualizado con éxito", updatedDoctorDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarDoctor(@PathVariable Long id) throws IllegalOperationException {
+        doctorService.eliminarDoctor(id);
+        ApiResponse<String> response = new ApiResponse<>(true, "Doctor eliminado con éxito", null);
+        return ResponseEntity.ok(response);
+    }
 }
 

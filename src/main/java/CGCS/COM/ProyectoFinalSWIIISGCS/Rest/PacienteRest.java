@@ -56,5 +56,30 @@ public class PacienteRest {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping
+    public ResponseEntity<?> guardarPaciente(@RequestBody PacienteDTO pacienteDTO) throws IllegalOperationException {
+        Paciente paciente = modelMapper.map(pacienteDTO, Paciente.class);
+        pacienteService.registrarPaciente(paciente);
 
+        PacienteDTO savedPacienteDTO = modelMapper.map(paciente, PacienteDTO.class);
+        ApiResponse<PacienteDTO> response = new ApiResponse<>(true, "Paciente guardado con éxito", savedPacienteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PacienteDTO>> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteDTO) throws IllegalOperationException {
+        Paciente paciente = modelMapper.map(pacienteDTO, Paciente.class);
+        pacienteService.actualizarPaciente(id, paciente);
+
+        PacienteDTO updatedPacienteDTO = modelMapper.map(paciente, PacienteDTO.class);
+        ApiResponse<PacienteDTO> response = new ApiResponse<>(true, "Paciente actualizado con éxito", updatedPacienteDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarPaciente(@PathVariable Long id) throws IllegalOperationException {
+        pacienteService.eliminarPaciente(id);
+        ApiResponse<String> response = new ApiResponse<>(true, "Paciente eliminado con éxito", null);
+        return ResponseEntity.ok(response);
+    }
 }

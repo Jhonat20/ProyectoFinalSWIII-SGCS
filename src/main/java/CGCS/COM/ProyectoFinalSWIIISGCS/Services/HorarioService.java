@@ -17,7 +17,7 @@ public interface HorarioService {
 
     Horario actualizarHorario(Long id, Horario horario) throws EntityNotFoundException, IllegalOperationException;
 
-    void Eliminar(Long id);
+    void Eliminar(Long id)throws EntityNotFoundException, IllegalOperationException;
 
     Horario actualizarParcial(Long id, Map<String, Object> cambios) throws IllegalOperationException;
 

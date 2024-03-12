@@ -8,11 +8,9 @@ import CGCS.COM.ProyectoFinalSWIIISGCS.responses.ApiResponse;
 import CGCS.COM.ProyectoFinalSWIIISGCS.responses.GlobalResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +48,31 @@ public class HistorialMedicoRest {
         ApiResponse<HistorialMedicoDTO> response = new ApiResponse<>(true, "Historial médico obtenido con éxito", historialMedicoDTO);
         return ResponseEntity.ok(response);
     }
+    @PostMapping
+    public ResponseEntity<?> guardarHistorialMedico(@RequestBody HistorialMedicoDTO historialMedicoDTO) throws IllegalOperationException {
+        HistorialMedico historialMedico = modelMapper.map(historialMedicoDTO, HistorialMedico.class);
+        historialMedicoService.Grabar(historialMedico);
 
+        HistorialMedicoDTO savedHistorialMedicoDTO = modelMapper.map(historialMedico, HistorialMedicoDTO.class);
+        ApiResponse<HistorialMedicoDTO> response = new ApiResponse<>(true, "Historial médico guardado con éxito", savedHistorialMedicoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<HistorialMedicoDTO>> actualizarHistorialMedico(@PathVariable Long id, @RequestBody HistorialMedicoDTO historialMedicoDTO) throws IllegalOperationException {
+        HistorialMedico historialMedico = modelMapper.map(historialMedicoDTO, HistorialMedico.class);
+        historialMedicoService.Actualizar(id, historialMedico);
+
+        HistorialMedicoDTO updatedHistorialMedicoDTO = modelMapper.map(historialMedico, HistorialMedicoDTO.class);
+        ApiResponse<HistorialMedicoDTO> response = new ApiResponse<>(true, "Historial médico actualizado con éxito", updatedHistorialMedicoDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarHistorialMedico(@PathVariable Long id) throws IllegalOperationException {
+        historialMedicoService.Eliminar(id);
+        ApiResponse<String> response = new ApiResponse<>(true, "Historial médico eliminado con éxito", null);
+        return ResponseEntity.ok(response);
+    }
 }
 
