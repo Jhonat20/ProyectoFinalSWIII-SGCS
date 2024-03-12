@@ -1,3 +1,8 @@
+/**
+ * @file: AdministrativoRest.java
+ * @created: [Fecha de creación]
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.Rest;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.DTO.AdministrativoDTO;
@@ -17,36 +22,58 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @file: AdministrativoRest
- * @author: Angel Arribasplata
- * @created: 7/03/2024
+ * Controlador REST para las operaciones relacionadas con los administrativos.
  */
 @RestController
 @RequestMapping("/api/v1/administrativo")
 public class AdministrativoRest {
+
     @Autowired
     private AdministrativoService administrativoService;
+
     @Autowired
     private ModelMapper modelMapper;
+
+    /**
+     * Endpoint para listar todos los administrativos.
+     *
+     * @return ResponseEntity con la respuesta.
+     * @throws IllegalOperationException Si se produce una operación ilegal.
+     */
     @GetMapping
     public ResponseEntity<?> listarAdministrativos() throws IllegalOperationException {
-        List<Administrativo> administrativos = administrativoService.listarAdministrativo(); // Llamada al método listarAdministrativos del servicio
+        List<Administrativo> administrativos = administrativoService.listarAdministrativo();
 
         List<AdministrativoDTO> administrativoDTOs = administrativos.stream()
                 .map(administrativo -> modelMapper.map(administrativo, AdministrativoDTO.class))
                 .collect(Collectors.toList());
 
-        // Utilizando GlobalResponse.ok() para crear una respuesta exitosa
         return ResponseEntity.ok(GlobalResponse.ok(administrativoDTOs));
     }
+
+    /**
+     * Endpoint para obtener un administrativo por su ID.
+     *
+     * @param id ID del administrativo.
+     * @return ResponseEntity con la respuesta.
+     * @throws IllegalOperationException Si se produce una operación ilegal.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerAdministrativoPorId(@PathVariable Long id) throws IllegalOperationException {
-        Optional<Administrativo> administrativo = administrativoService.obtenerAdministrativoPorId(id); // Método para buscar un administrativo por su ID
-        AdministrativoDTO administrativoDTO = modelMapper.map(administrativo, AdministrativoDTO.class); // Mapeo a DTO
+        Optional<Administrativo> administrativo = administrativoService.obtenerAdministrativoPorId(id);
+        AdministrativoDTO administrativoDTO = modelMapper.map(administrativo, AdministrativoDTO.class);
 
         ApiResponse<AdministrativoDTO> response = new ApiResponse<>(true, "Administrativo obtenido con éxito", administrativoDTO);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Endpoint para guardar un nuevo administrativo.
+     *
+     * @param administrativoDTO DTO del administrativo a guardar.
+     * @return ResponseEntity con la respuesta.
+     * @throws IllegalOperationException Si se produce una operación ilegal.
+     */
     @PostMapping
     public ResponseEntity<?> guardarAdministrativo(@RequestBody AdministrativoDTO administrativoDTO) throws IllegalOperationException {
         Administrativo administrativo = modelMapper.map(administrativoDTO, Administrativo.class);
@@ -57,6 +84,14 @@ public class AdministrativoRest {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * Endpoint para actualizar un administrativo existente.
+     *
+     * @param id              ID del administrativo a actualizar.
+     * @param administrativoDTO DTO con los nuevos datos del administrativo.
+     * @return ResponseEntity con la respuesta.
+     * @throws IllegalOperationException Si se produce una operación ilegal.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AdministrativoDTO>> actualizarAdministrativo(@PathVariable Long id, @RequestBody AdministrativoDTO administrativoDTO) throws IllegalOperationException {
         Administrativo administrativo = modelMapper.map(administrativoDTO, Administrativo.class);
@@ -67,6 +102,13 @@ public class AdministrativoRest {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Endpoint para eliminar un administrativo por su ID.
+     *
+     * @param id ID del administrativo a eliminar.
+     * @return ResponseEntity con la respuesta.
+     * @throws IllegalOperationException Si se produce una operación ilegal.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarAdministrativo(@PathVariable Long id) throws IllegalOperationException {
         administrativoService.eliminarAdministrativo(id);

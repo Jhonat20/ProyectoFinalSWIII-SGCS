@@ -1,18 +1,20 @@
+/**
+ * La clase CitaModel es una representación del modelo de una cita en el contexto de HATEOAS (Hypertext As The Engine Of Application State).
+ *
+ * @file: CitaModel.java
+ * @created: [Fecha de creación]
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Cita;
 
-import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Doctor;
-import CGCS.COM.ProyectoFinalSWIIISGCS.Domain.Paciente;
 import lombok.Data;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 /**
- * @file: CitaModel
- * @author: (c) Jhon Bravo
- * @created: 09/03/2024 8:07
+ * Clase que representa el modelo de una cita con HATEOAS.
  */
 @Data
 public class CitaModel extends RepresentationModel<CitaModel> {
@@ -21,5 +23,4 @@ public class CitaModel extends RepresentationModel<CitaModel> {
     private LocalTime hora;
     private String descripcion;
     private String estado;
-
 }

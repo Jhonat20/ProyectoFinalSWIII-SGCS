@@ -1,3 +1,9 @@
+/**
+ * @file: HistorialMedicoAssembler.java
+ * @author: (c) Jhon Bravo
+ * @created: 09/03/2024 10:19
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.HistorialMedico;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Controllers.HistorialMedicoController;
@@ -6,17 +12,24 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 /**
- * @file: HistorialMedicoAssembler
- * @author: (c) Jhon Bravo
- * @created: 09/03/2024 10:19
+ * Ensamblador de modelo para la entidad HistorialMedico, utilizado en HATEOAS.
  */
 @Component
 public class HistorialMedicoAssembler extends RepresentationModelAssemblerSupport<HistorialMedico, HistorialMedicoModel> {
 
-public HistorialMedicoAssembler() {
+    /**
+     * Constructor que configura el ensamblador para trabajar con el controlador HistorialMedicoController.
+     */
+    public HistorialMedicoAssembler() {
         super(HistorialMedicoController.class, HistorialMedicoModel.class);
     }
 
+    /**
+     * Convierte una instancia de la entidad HistorialMedico en un modelo de HistorialMedicoModel.
+     *
+     * @param historialMedico La entidad HistorialMedico.
+     * @return El modelo HistorialMedicoModel correspondiente.
+     */
     @Override
     public HistorialMedicoModel toModel(HistorialMedico historialMedico) {
         HistorialMedicoModel historialMedicoModel = new HistorialMedicoModel();
@@ -28,5 +41,4 @@ public HistorialMedicoAssembler() {
         historialMedicoModel.setMedicamentos(historialMedico.getMedicamentos());
         return historialMedicoModel;
     }
-
 }

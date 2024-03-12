@@ -1,3 +1,8 @@
+/**
+ * @file: AplicationConfig.java
+ * @created: [Fecha de creación]
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.SecurityJWT;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.User.UserRepository;
@@ -14,34 +19,57 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * @file: AplicationConfig
- * @author: EdwarMoya
- * @created: 12/03/2024
- * @HoraCreated: 12:58 a. m.
+ * Configuración de la aplicación para la autenticación con JWT.
  */
 @Configuration
 @RequiredArgsConstructor
 public class AplicationConfig {
 
     private final UserRepository userRepository;
+
+    /**
+     * Bean para obtener el AuthenticationManager.
+     *
+     * @param config Configuración de la autenticación.
+     * @return AuthenticationManager.
+     * @throws Exception Si se produce un error al obtener el AuthenticationManager.
+     */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+    /**
+     * Bean para proporcionar un AuthenticationProvider con detalles de usuario personalizados.
+     *
+     * @return AuthenticationProvider.
+     */
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
+    /**
+     * Bean para obtener un PasswordEncoder (encriptador de contraseñas).
+     *
+     * @return PasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    /**
+     * Bean para proporcionar un UserDetailsService personalizado.
+     *
+     * @return UserDetailsService.
+     */
     @Bean
     public UserDetailsService userDetailService() {
         return username -> userRepository.findByUsername(username)
-        .orElseThrow(()-> new UsernameNotFoundException("User not Fournd"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

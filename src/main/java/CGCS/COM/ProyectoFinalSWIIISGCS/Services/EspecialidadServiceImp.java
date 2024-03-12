@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementación del servicio para la gestión de especialidades médicas.
+ */
 @Service
 public class EspecialidadServiceImp implements EspecialidadService {
 

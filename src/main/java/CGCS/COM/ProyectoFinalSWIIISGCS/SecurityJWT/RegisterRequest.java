@@ -1,3 +1,10 @@
+/**
+ * @file: RegisterRequest.java
+ * @created: 11/03/2024
+ * @HoraCreated: 09:49 p. m.
+ * @author: Edwar Moya
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.SecurityJWT;
 
 import lombok.AllArgsConstructor;
@@ -6,21 +13,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @file: RegisterRequest
- * @author: EdwarMoya
- * @created: 11/03/2024
- * @HoraCreated: 09:49 p. m.
+ * Clase que representa la solicitud de registro.
  */
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
 
-    String username;
-    String password;
-    String nombre;
-    String apellido;
-    String country;
+    private String username;
+    private String password;
+    private String nombre;
+    private String apellido;
+    private String country;
 }

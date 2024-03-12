@@ -1,3 +1,9 @@
+/**
+ * @file: EspecialidadModelAssembler.java
+ * @author: (c) Jhon Bravo
+ * @created: 09/03/2024 20:51
+ */
+
 package CGCS.COM.ProyectoFinalSWIIISGCS.ImpHateoas.Especialidad;
 
 import CGCS.COM.ProyectoFinalSWIIISGCS.Controllers.EspecialidadController;
@@ -6,18 +12,25 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 /**
- * @file: EspecialidadModelAssembler
- * @author: (c) Jhon Bravo
- * @created: 09/03/2024 20:51
+ * Ensamblador de modelo para la entidad Especialidad, utilizado en HATEOAS.
  */
 @Component
 public class EspecialidadModelAssembler extends RepresentationModelAssemblerSupport<Especialidad, EspecialidadModel>{
 
-   public EspecialidadModelAssembler() {
-       super(EspecialidadController.class, EspecialidadModel.class);
-   }
+    /**
+     * Constructor que configura el ensamblador para trabajar con el controlador EspecialidadController.
+     */
+    public EspecialidadModelAssembler() {
+        super(EspecialidadController.class, EspecialidadModel.class);
+    }
 
-  @Override
+    /**
+     * Convierte una instancia de la entidad Especialidad en un modelo de EspecialidadModel.
+     *
+     * @param especialidad La entidad Especialidad.
+     * @return El modelo EspecialidadModel correspondiente.
+     */
+    @Override
     public EspecialidadModel toModel(Especialidad especialidad) {
         EspecialidadModel especialidadModel = new EspecialidadModel();
         especialidadModel.setIdEspecialidad(especialidad.getIdEspecialidad());
@@ -25,5 +38,4 @@ public class EspecialidadModelAssembler extends RepresentationModelAssemblerSupp
         especialidadModel.setDescripcion(especialidad.getDescripcion());
         return especialidadModel;
     }
-
 }
