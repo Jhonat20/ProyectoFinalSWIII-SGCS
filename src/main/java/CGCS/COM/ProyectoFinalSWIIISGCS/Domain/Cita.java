@@ -3,14 +3,14 @@ package CGCS.COM.ProyectoFinalSWIIISGCS.Domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
+
 
 /**
  * Clase que representa una cita dentro del dominio de la aplicación.
@@ -65,6 +65,5 @@ public class Cita {
             estado = "Pendiente";  // Estado por defecto
         }
     }
-
 
 }
